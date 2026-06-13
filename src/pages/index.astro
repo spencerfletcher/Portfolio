@@ -95,6 +95,11 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 				color: var(--text-primary);
 			}
 
+			.subtitle > a {
+				font-weight: 600;
+				color: var(--text-primary);
+			}
+
 			p {
 				margin-bottom: 0;
 			}
@@ -286,7 +291,30 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 				font-size: 0.8rem;
 				color: var(--text-secondary);
 				opacity: 0.6;
-				align-self: center;
+				align-self: start;
+			}
+			.project-card {
+				transition: box-shadow 0.5s ease;
+				border-radius: 12px; /* match your existing card radius */
+			}
+
+			.glow {
+				animation: card-glow 1.5s ease-out;
+			}
+
+			@keyframes card-glow {
+				0% {
+					box-shadow: 0 0 0 0 var(--accent-glow);
+				}
+				15% {
+					box-shadow: 0 0 24px 4px rgba(124, 111, 240, 0.55);
+				} /* quick ramp up */
+				70% {
+					box-shadow: 0 0 24px 4px rgba(124, 111, 240, 0.55);
+				} /* hold — same value */
+				100% {
+					box-shadow: 0 0 0 0 rgba(124, 111, 240, 0);
+				} /* quick fade out */
 			}
 		</style>
 	</head>
@@ -295,14 +323,21 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 			<main>
 				<header>
 					<div class="header-content">
-						<p class="eyebrow">UBC Computer Science · 3.9 GPA · US Citizen</p>
+						<p class="eyebrow">
+							UBC Computer Science · 3.9 GPA · US Citizen · Open To Work
+						</p>
 						<h1>Spencer Fletcher</h1>
 						<p class="subtitle">
-							I build systems that hold up under real conditions — from compiler
-							tooling to full stack web apps to real-time distributed systems.
-							Right now I'm finishing my CS degree at UBC and overhauling my
-							recipe platform. Looking for software engineering roles starting
-							fall 2026.
+							I'm a UBC CS grad who enjoys building tools that solve hard
+							problems — from a
+							<a href="#mem">Clang/LLVM memory-safety checker </a>, to a <a
+								href="#poly"
+							>
+								real-time arbitrage system across 40+ data feeds
+							</a>, to a <a href="#fork">
+								recipe platform with git-style version control</a
+							>. I care about systems that are correct under pressure, not just
+							one-time demos.
 						</p>
 					</div>
 
@@ -340,6 +375,7 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 								},
 							]}
 							href="https://github.com/spencerfletcher/MemoryGuard"
+							id="mem"
 						/>
 
 						<ProjectCard
@@ -349,6 +385,7 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 							tags={["Python", "Distributed Systems", "Real-Time"]}
 							links={[]}
 							note="Closed source."
+							id="poly"
 						/>
 
 						<ProjectCard
@@ -367,6 +404,7 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 								},
 							]}
 							href="https://cps.med.ubc.ca/body-donation/"
+							id="ubc"
 						/>
 
 						<ProjectCard
@@ -381,6 +419,7 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 								},
 							]}
 							href="https://github.com/spencerfletcher/Fork"
+							id="fork"
 						/>
 
 						<ProjectCard
@@ -389,6 +428,7 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 							description="Built tooling for the Hollywood Theatre in Vancouver — a web-based marquee letter tracker and a tip-splitting system, saving <strong>5+ hours of manual work weekly</strong>."
 							tags={["JavaScript", "Google Apps Script"]}
 							note="Source unavailable — client project."
+							id="tips"
 						/>
 					</div>
 				</section>
@@ -456,6 +496,21 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 						}
 					});
 				});
+			document.querySelectorAll(".subtitle > a").forEach((link) => {
+				link.addEventListener("click", (e) => {
+					if (!link.getAttribute("href")) return;
+					const href = link.getAttribute("href"); // strip the #
+					if (!href) return;
+					const id = href.slice(1);
+					const card = document.getElementById(id);
+					if (!card) return;
+					e.preventDefault(); // take over so we can smooth-scroll + glow
+					card.scrollIntoView({ behavior: "smooth", block: "center" });
+					card.classList.remove("glow");
+					void card.offsetWidth;
+					card.classList.add("glow");
+				});
+			});
 		</script>
 	</body>
 </html>

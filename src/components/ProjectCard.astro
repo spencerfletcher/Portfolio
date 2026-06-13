@@ -8,9 +8,10 @@ interface Props {
 	href?: string;
 	featured?: boolean;
 	note?: string;
+	id?: string;
 }
 
-const { title, year, description, tags, links, href, featured, note } =
+const { title, year, description, tags, links, href, featured, note, id } =
 	Astro.props;
 ---
 
@@ -19,6 +20,7 @@ const { title, year, description, tags, links, href, featured, note } =
 	onclick={href && `window.open('${href}', '_blank')`}
 	role={href ? "link" : undefined}
 	tabindex={href ? "0" : undefined}
+	id={id}
 >
 	{featured && <div class="featured-label">Featured</div>}
 	<h3>{title}</h3>
