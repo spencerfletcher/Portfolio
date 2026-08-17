@@ -364,10 +364,29 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 					<div class="projects-container">
 						<ProjectCard
 							featured
+							title="Prediction-Market Trading Engines"
+							year="2026 - Ongoing"
+							description="Two market-making engines quoting real capital on <strong>Polymarket US and Kalshi</strong> over persistent WebSocket feeds — <strong>55k contracts / $44k notional</strong> filled to date. Began as a cross-venue arbitrage system; measurement showed <strong>69% of detected edges were stale-feed artifacts</strong>, so the strategy was retired and rebuilt around resting quotes instead of racing to take. Exact-decimal money layer, crash recovery from venue state, 684 tests."
+							tags={["Python", "Websockets", "asyncio", "AWS"]}
+							links={[
+								{
+									label: "Market Maker →",
+									href: "https://github.com/spencerfletcher/market-maker",
+								},
+								{
+									label: "Arbitrage Engine →",
+									href: "https://github.com/spencerfletcher/arbitrage-engine",
+								},
+							]}
+							href="https://github.com/spencerfletcher/market-maker"
+							note="Market selection, tuned parameters, and results are withheld."
+							id="poly"
+						/>
+						<ProjectCard
 							title="MemoryGuard"
 							year="2024"
-							description="A Clang/LLVM-based memory safety tool for C programs. Combines static instrumentation with dynamic runtime analysis to detect dangling pointers, memory leaks, and double-frees, generating annotated, syntax-highlighted error reports with precise source locations."
-							tags={["C++", "Clang/LLVM", "CMake", "Python"]}
+							description="A Clang/LLVM memory safety tool for C. Static instrumentation plus dynamic runtime analysis to detect memory leaks and dangling pointers, with annotated, syntax-highlighted error reports."
+							tags={["C++", "CMake", "Python"]}
 							links={[
 								{
 									label: "View Code →",
@@ -464,16 +483,6 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 								</div>
 							</div>
 						</ProjectCard>
-
-						<ProjectCard
-							title="PolymarketBot"
-							year="2026 - Ongoing"
-							description="Real-time arbitrage detection across <strong>5000 tokens and 2600 prediction markets</strong> via persistent WebSocket connections. Distributed event-driven architecture with cross-platform odds matching and safety mechanisms for graceful degradation."
-							tags={["Python", "Distributed Systems", "Real-Time"]}
-							links={[]}
-							note="Closed source."
-							id="poly"
-						/>
 
 						<ProjectCard
 							title="UBC Medicine - Website Redesign"
