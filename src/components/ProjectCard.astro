@@ -11,8 +11,8 @@ interface Props {
 	id?: string;
 }
 
-const { title, year, description, tags, links, href, featured, note, id } =
-	Astro.props;
+const { title, year, description, tags, links, href, featured, note, id } = Astro.props;
+const hasDetails = Astro.slots.has('details');
 ---
 
 <article
@@ -27,8 +27,30 @@ const { title, year, description, tags, links, href, featured, note, id } =
 	<span class="year">{year}</span>
 	<p set:html={description} />
 	<div class="tags">
-		{tags.map((tag) => <span class="tag">{tag}</span>)}
+		<div class="tag-list">
+			{tags.map((tag) => <span class="tag">{tag}</span>)}
+		</div>
+		{hasDetails && (
+			<button
+				class="how-it-works-btn"
+				aria-expanded="false"
+				aria-controls={`details-${id}`}
+				onclick="event.stopPropagation()"
+			>
+				<span class="btn-label">How it works</span>
+				<span class="chevron">▾</span>
+			</button>
+		)}
 	</div>
+	{hasDetails && (
+		<div class="details-wrapper" id={`details-${id}`}>
+			<div class="details-inner">
+				<div class="details-content">
+					<slot name="details" />
+				</div>
+			</div>
+		</div>
+	)}
 	{
 		links && links.length > 0 && (
 			<div class="links">
@@ -88,7 +110,9 @@ const { title, year, description, tags, links, href, featured, note, id } =
 		line-height: 1.65;
 	}
 
-	.projects-container article:last-child:nth-child(even) {
+	/* of-type, not nth-child: Astro drops this component's <script> into the
+	   container as a sibling, which would otherwise flip the parity. */
+	.projects-container article:last-of-type:nth-of-type(even) {
 		grid-column: 1;
 	}
 
@@ -111,9 +135,17 @@ const { title, year, description, tags, links, href, featured, note, id } =
 
 	.tags {
 		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		flex-wrap: wrap;
 		gap: 0.4rem;
 		margin: 1rem 0;
+	}
+
+	.tag-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
 	}
 
 	.tag {
@@ -126,6 +158,182 @@ const { title, year, description, tags, links, href, featured, note, id } =
 		font-weight: 400;
 		letter-spacing: 0.02em;
 		opacity: 0.75;
+	}
+
+	/* Toggle button */
+	.how-it-works-btn {
+		display: flex;
+		align-items: center;
+		gap: 0.3rem;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		color: var(--accent);
+		background: transparent;
+		border: 1px solid rgba(139, 124, 247, 0.3);
+		border-radius: 4px;
+		padding: 0.2rem 0.55rem;
+		cursor: pointer;
+		letter-spacing: 0.02em;
+		opacity: 0.75;
+		transition: opacity 0.15s ease, border-color 0.15s ease;
+		white-space: nowrap;
+	}
+
+	.how-it-works-btn:hover {
+		opacity: 1;
+		border-color: rgba(139, 124, 247, 0.6);
+	}
+
+	.how-it-works-btn .chevron {
+		display: inline-block;
+		transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.how-it-works-btn.open .chevron {
+		transform: rotate(-180deg);
+	}
+
+	/* CSS grid height animation — no JS measurement, no max-height hack */
+	.details-wrapper {
+		display: grid;
+		grid-template-rows: 0fr;
+		transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.details-wrapper.open {
+		grid-template-rows: 1fr;
+	}
+
+	.details-inner {
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	.details-content {
+		padding: 0.5rem 0 0.75rem;
+	}
+
+	/* ── Reusable panel layout ───────────────────────────────────── */
+	/* auto-fit collapses empty tracks: 1 panel fills the row, 2 sit side by
+	   side, and they stack on their own once a column can't hold 280px. */
+	.detail-panels {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+		gap: 0.65rem;
+	}
+
+	.detail-panel {
+		background: #0a0a0e;
+		border: 1px solid rgba(255, 255, 255, 0.085);
+		border-radius: 6px;
+		overflow: hidden;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+	}
+
+	.detail-panel-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.3rem 0.65rem;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.085);
+		background: rgba(255, 255, 255, 0.025);
+	}
+
+	.detail-panel-label {
+		font-size: 0.62rem;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--accent);
+	}
+
+	.detail-panel-caption {
+		font-size: 0.62rem;
+		color: var(--text-secondary);
+		opacity: 0.45;
+	}
+
+	/* ── Pipeline panel ──────────────────────────────────────────── */
+	.pipeline-body {
+		padding: 0.85rem 0.75rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.pipeline-edge {
+		font-size: 0.67rem;
+		color: var(--text-secondary);
+		opacity: 0.55;
+	}
+
+	.pipeline-stage {
+		width: 100%;
+		border: 1px solid rgba(255, 255, 255, 0.06);
+		border-left: 2px solid rgba(139, 124, 246, 0.5);
+		border-radius: 0 4px 4px 0;
+		padding: 0.5rem 0.65rem;
+		background: rgba(255, 255, 255, 0.02);
+	}
+
+	.pipeline-stage-row {
+		display: flex;
+		align-items: baseline;
+		gap: 0.25rem;
+		flex-wrap: wrap;
+		margin-bottom: 0.25rem;
+	}
+
+	.pipeline-stage-num {
+		font-size: 0.65rem;
+		color: var(--accent);
+		opacity: 0.75;
+		flex-shrink: 0;
+	}
+
+	.pipeline-stage-name {
+		font-size: 0.7rem;
+		color: var(--text-primary);
+	}
+
+	.pipeline-stage-tech {
+		font-size: 0.62rem;
+		color: var(--accent);
+		opacity: 0.6;
+	}
+
+	.pipeline-stage-desc {
+		font-size: 0.62rem;
+		color: var(--text-secondary);
+		opacity: 0.55;
+		line-height: 1.5;
+		font-family: var(--font-mono);
+	}
+
+	.pipeline-connector {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.08rem;
+		padding: 0.18rem 0;
+	}
+
+	.pipeline-connector-line {
+		width: 1px;
+		height: 7px;
+		background: rgba(255, 255, 255, 0.1);
+	}
+
+	.pipeline-connector-artifact {
+		font-size: 0.6rem;
+		color: var(--text-secondary);
+		opacity: 0.45;
+	}
+
+	.pipeline-connector-caret {
+		font-size: 0.62rem;
+		color: rgba(255, 255, 255, 0.15);
+		line-height: 1;
 	}
 
 	.links {
@@ -155,3 +363,21 @@ const { title, year, description, tags, links, href, featured, note, id } =
 		}
 	}
 </style>
+
+<script>
+	document.querySelectorAll<HTMLButtonElement>('.how-it-works-btn').forEach((btn) => {
+		btn.addEventListener('click', (e) => {
+			e.stopPropagation();
+			const wrapperId = btn.getAttribute('aria-controls');
+			if (!wrapperId) return;
+			const wrapper = document.getElementById(wrapperId);
+			if (!wrapper) return;
+			const isOpen = !wrapper.classList.contains('open');
+			wrapper.classList.toggle('open', isOpen);
+			btn.classList.toggle('open', isOpen);
+			btn.setAttribute('aria-expanded', String(isOpen));
+			const label = btn.querySelector('.btn-label');
+			if (label) label.textContent = isOpen ? 'Hide details' : 'How it works';
+		});
+	});
+</script>

@@ -376,7 +376,94 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 							]}
 							href="https://github.com/spencerfletcher/MemoryGuard"
 							id="mem"
-						/>
+						>
+							<div slot="details">
+								<div class="detail-panels">
+									<!-- Left: pipeline -->
+									<div class="detail-panel">
+										<div class="detail-panel-header">
+											<span class="detail-panel-label">Pipeline</span>
+											<span class="detail-panel-caption">3 stage</span>
+										</div>
+										<div class="pipeline-body">
+											<span class="pipeline-edge">Your C File</span>
+											<div class="pipeline-connector">
+												<div class="pipeline-connector-line"></div>
+												<span class="pipeline-connector-caret">▼</span>
+											</div>
+											<div class="pipeline-stage">
+												<div class="pipeline-stage-row">
+													<span class="pipeline-stage-num">Stage 1 —</span>
+													<span class="pipeline-stage-name"
+														>AST Instrumentation</span
+													>
+													<span class="pipeline-stage-tech">· Clang / LLVM</span
+													>
+												</div>
+												<p class="pipeline-stage-desc">
+													Traverses the AST and injects analysis hooks around
+													malloc, free, dereferences, and aliasing.
+												</p>
+											</div>
+											<div class="pipeline-connector">
+												<div class="pipeline-connector-line"></div>
+												<span class="pipeline-connector-artifact"
+													>instrumented.c</span
+												>
+												<div class="pipeline-connector-line"></div>
+												<span class="pipeline-connector-caret">▼</span>
+											</div>
+											<div class="pipeline-stage">
+												<div class="pipeline-stage-row">
+													<span class="pipeline-stage-num">Stage 2 —</span>
+													<span class="pipeline-stage-name"
+														>Runtime Analysis</span
+													>
+													<span class="pipeline-stage-tech"
+														>· C++ shared library</span
+													>
+												</div>
+												<p class="pipeline-stage-desc">
+													Tracks pointer state at runtime, builds a shadow map
+													of allocations, and records errors to JSON.
+												</p>
+											</div>
+											<div class="pipeline-connector">
+												<div class="pipeline-connector-line"></div>
+												<span class="pipeline-connector-artifact"
+													>output_report.json</span
+												>
+												<div class="pipeline-connector-line"></div>
+												<span class="pipeline-connector-caret">▼</span>
+											</div>
+											<div class="pipeline-stage">
+												<div class="pipeline-stage-row">
+													<span class="pipeline-stage-num">Stage 3 —</span>
+													<span class="pipeline-stage-name">Visual Report</span>
+													<span class="pipeline-stage-tech"
+														>· Python / Pygments</span
+													>
+												</div>
+												<p class="pipeline-stage-desc">
+													Annotates the original source with error messages and
+													renders a syntax-highlighted PNG.
+												</p>
+											</div>
+											<div class="pipeline-connector">
+												<div class="pipeline-connector-line"></div>
+												<span class="pipeline-connector-artifact">test.png</span
+												>
+												<div class="pipeline-connector-line"></div>
+												<span class="pipeline-connector-caret">▼</span>
+											</div>
+											<span class="pipeline-edge"
+												>Annotated source — exact error locations</span
+											>
+										</div>
+									</div>
+								</div>
+							</div>
+						</ProjectCard>
 
 						<ProjectCard
 							title="PolymarketBot"
