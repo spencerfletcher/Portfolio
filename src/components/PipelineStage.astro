@@ -1,0 +1,22 @@
+---
+interface Props {
+	label: string;
+	desc: string;
+}
+
+const { label, desc } = Astro.props;
+---
+
+<div class="pipeline-stage">
+	<span class="pipeline-stage-num">{label}</span>
+	<p class="pipeline-stage-desc">{desc}</p>
+</div>
+
+<style>
+	/* Replaces the old .pipeline-stage-row flex wrapper, which only ever held
+	   this one span. */
+	.pipeline-stage-num {
+		display: block;
+		margin-bottom: 0.25rem;
+	}
+</style>

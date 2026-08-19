@@ -1,0 +1,37 @@
+---
+import type { PipelineItem } from "./pipeline";
+import PipelineConnector from "./PipelineConnector.astro";
+import PipelineObject from "./PipelineObject.astro";
+import PipelineStage from "./PipelineStage.astro";
+
+interface Props {
+	items: PipelineItem[];
+	label?: string;
+}
+
+const { items, label = "Pipeline" } = Astro.props;
+
+const stageCount = items.filter((item) => item.type === "stage").length;
+---
+
+<div class="detail-panel">
+	<div class="detail-panel-header">
+		<span class="detail-panel-label">{label}</span>
+		<span class="detail-panel-caption">{stageCount} stage</span>
+	</div>
+	<div class="pipeline-body">
+		{
+			items.map((item, i) => (
+				<>
+					{/* Connector precedes each node, so the last node has no dangling arrow. */}
+					{i > 0 && <PipelineConnector />}
+					{item.type === "object" ? (
+						<PipelineObject label={item.label} />
+					) : (
+						<PipelineStage label={item.label} desc={item.desc} />
+					)}
+				</>
+			))
+		}
+	</div>
+</div>

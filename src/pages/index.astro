@@ -1,4 +1,5 @@
 ---
+import HowItWorks from "../components/HowItWorks.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 
 const pageTitle = "Spencer Fletcher | Software Engineer";
@@ -382,138 +383,65 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 							note="Market selection, tuned parameters, and results are withheld."
 							id="poly"
 						>
-							<div slot="details">
-								<div class="detail-panels">
-									<div class="detail-panel">
-										<div class="detail-panel-header">
-											<span class="detail-panel-label">Pipeline</span>
-											<span class="detail-panel-caption">5 stage</span>
-										</div>
-										<div class="pipeline-body">
-											<span class="pipeline-edge"
-												>Venue market universe — Polymarket US + Kalshi</span
-											>
-											<div class="pipeline-connector">
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-caret">▼</span>
-											</div>
-											<div class="pipeline-stage">
-												<div class="pipeline-stage-row">
-													<span class="pipeline-stage-num">
-														Stage 1 — Discovery Crawl · asyncio / REST
-													</span>
-												</div>
-												<p class="pipeline-stage-desc">
-													Walks every listed market on both venues and
-													normalizes two different venue schemas into one
-													internal market shape.
-												</p>
-											</div>
-											<div class="pipeline-connector">
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-artifact"
-													>market universe</span
-												>
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-caret">▼</span>
-											</div>
-											<div class="pipeline-stage">
-												<div class="pipeline-stage-row">
-													<span class="pipeline-stage-num">
-														Stage 2 — Two-Stage Screen · Python
-													</span>
-												</div>
-												<p class="pipeline-stage-desc">
-													Filter out books that are structurally invalid: No
-													recent trades, too much competition, books without
-													rebate potential. Almost everything dies here. Only
-													survivors get a paid depth read.
-												</p>
-											</div>
-											<div class="pipeline-connector">
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-artifact"
-													>screen_&lt;timestamp&gt;.csv</span
-												>
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-caret">▼</span>
-											</div>
-											<div class="pipeline-stage">
-												<div class="pipeline-stage-row">
-													<span class="pipeline-stage-num">
-														Stage 3 — Quote Cycle · asyncio / WebSockets
-													</span>
-												</div>
-												<p class="pipeline-stage-desc">
-													Per market, per interval: check the kill switch before
-													any venue call, read the book (WebSocket if fresh
-													enough, cache-busted REST otherwise), then join the
-													touch or improve by exactly one tick.
-													Cancel-and-replace only where our own price moved — an
-													unchanged quote keeps its queue position.
-												</p>
-											</div>
-											<div class="pipeline-connector">
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-artifact"
-													>resting orders on the venue</span
-												>
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-caret">▼</span>
-											</div>
-											<div class="pipeline-stage">
-												<div class="pipeline-stage-row">
-													<span class="pipeline-stage-num">
-														Stage 4 — Fill Booking · Private order WebSocket
-													</span>
-												</div>
-												<p class="pipeline-stage-desc">
-													Fills arrive on a bounded queue that drops oldest
-													under pressure, safe because booking is
-													cumulative-quantity based. Every fill is booked
-													idempotently and its commission read back from the
-													venue rather than modelled.
-												</p>
-											</div>
-											<div class="pipeline-connector">
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-artifact"
-													>poly_live_mm_fills.csv</span
-												>
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-caret">▼</span>
-											</div>
-											<div class="pipeline-stage">
-												<div class="pipeline-stage-row">
-													<span class="pipeline-stage-num">
-														Stage 5 — Durable State · fsync / atomic replace
-													</span>
-												</div>
-												<p class="pipeline-stage-desc">
-													Order intent is persisted before the order is
-													transmitted, so the "sent, then died before the
-													response" window is recoverable. On restart, belief is
-													rebuilt from venue truth rather than from local
-													memory.
-												</p>
-											</div>
-											<div class="pipeline-connector">
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-artifact"
-													>maker_state_poly.json</span
-												>
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-caret">▼</span>
-											</div>
-											<span class="pipeline-edge"
-												>Quotes resting on books that can actually pay — with
-												position, exposure and crash state provable at any
-												instant</span
-											>
-										</div>
-									</div>
-								</div>
-							</div>
+							<HowItWorks
+								slot="details"
+								items={[
+									{
+										type: "object",
+										label: "Venue market universe - Polymarket US + Kalshi",
+									},
+									{
+										type: "stage",
+										label: "Stage 1 - Discovery Crawl | asyncio / REST",
+										desc: "Walks every listed market on both venues and normalizes two different venue schemas into one internal market shape.",
+									},
+									{
+										type: "object",
+										label: "market universe",
+									},
+									{
+										type: "stage",
+										label: "Stage 2 - Two-Stage Screen | Python",
+										desc: "Filter out books that are structurally invalid: No recent trades, too much competition, books without rebate potential. Almost everything dies here. Only survivors get a paid depth read.",
+									},
+									{
+										type: "object",
+										label: "screen_<timestamp>.csv",
+									},
+									{
+										type: "stage",
+										label: "Stage 3 - Quote Cycle | asyncio / WebSockets",
+										desc: "Per market, per interval: check the kill switch before any venue call, read the book (WebSocket if fresh enough, cache-busted REST otherwise), then join the touch or improve by exactly one tick. Cancel-and-replace only where our own price moved - an unchanged quote keeps its queue position.",
+									},
+									{
+										type: "object",
+										label: "resting orders on the venue",
+									},
+									{
+										type: "stage",
+										label: "Stage 4 - Fill Booking | Private order WebSocket",
+										desc: "Fills arrive on a bounded queue that drops oldest under pressure, safe because booking is cumulative-quantity based. Every fill is booked idempotently and its commission read back from the venue rather than modelled.",
+									},
+									{
+										type: "object",
+										label: "poly_live_mm_fills.csv",
+									},
+									{
+										type: "stage",
+										label: "Stage 5 - Durable State | fsync / atomic replace",
+										desc: 'Order intent is persisted before the order is transmitted, so the "sent, then died before the response" window is recoverable. On restart, belief is rebuilt from venue truth rather than from local memory.',
+									},
+									{
+										type: "object",
+										label: "maker_state_poly.json",
+									},
+									{
+										type: "object",
+										label:
+											"Quotes resting on books that can actually pay - with position, exposure and crash state provable at any instant",
+									},
+								]}
+							/>
 						</ProjectCard>
 						<ProjectCard
 							title="MemoryGuard"
@@ -529,83 +457,43 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 							href="https://github.com/spencerfletcher/MemoryGuard"
 							id="mem"
 						>
-							<div slot="details">
-								<div class="detail-panels">
-									<!-- Left: pipeline -->
-									<div class="detail-panel">
-										<div class="detail-panel-header">
-											<span class="detail-panel-label">Pipeline</span>
-											<span class="detail-panel-caption">3 stage</span>
-										</div>
-										<div class="pipeline-body">
-											<span class="pipeline-edge">Your C File</span>
-											<div class="pipeline-connector">
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-caret">▼</span>
-											</div>
-											<div class="pipeline-stage">
-												<div class="pipeline-stage-row">
-													<span class="pipeline-stage-num">
-														Stage 1 — AST Instrumentation · Clang / LLVM
-													</span>
-												</div>
-												<p class="pipeline-stage-desc">
-													Traverses the AST and injects analysis hooks around
-													malloc, free, dereferences, and aliasing.
-												</p>
-											</div>
-											<div class="pipeline-connector">
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-artifact"
-													>instrumented.c</span
-												>
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-caret">▼</span>
-											</div>
-											<div class="pipeline-stage">
-												<div class="pipeline-stage-row">
-													<span class="pipeline-stage-num"
-														>Stage 2 — Runtime Analysis · C++ shared library
-													</span>
-												</div>
-												<p class="pipeline-stage-desc">
-													Tracks pointer state at runtime, builds a shadow map
-													of allocations, and records errors to JSON.
-												</p>
-											</div>
-											<div class="pipeline-connector">
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-artifact"
-													>output_report.json</span
-												>
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-caret">▼</span>
-											</div>
-											<div class="pipeline-stage">
-												<div class="pipeline-stage-row">
-													<span class="pipeline-stage-num">
-														Stage 3 — Visual Report · Python / Pygments
-													</span>
-												</div>
-												<p class="pipeline-stage-desc">
-													Annotates the original source with error messages and
-													renders a syntax-highlighted PNG.
-												</p>
-											</div>
-											<div class="pipeline-connector">
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-artifact">test.png</span
-												>
-												<div class="pipeline-connector-line"></div>
-												<span class="pipeline-connector-caret">▼</span>
-											</div>
-											<span class="pipeline-edge"
-												>Annotated source — exact error locations</span
-											>
-										</div>
-									</div>
-								</div>
-							</div>
+							<HowItWorks
+								slot="details"
+								items={[
+									{ type: "object", label: "Your C File" },
+									{
+										type: "stage",
+										label: "Stage 1 - AST Instrumentation | Clang / LLVM",
+										desc: "Traverses the AST and injects analysis hooks around malloc, free, dereferences, and aliasing.",
+									},
+									{
+										type: "object",
+										label: "instrumented.c",
+									},
+									{
+										type: "stage",
+										label: "Stage 2 - Runtime Analysis | C++ shared library",
+										desc: "Tracks pointer state at runtime, builds a shadow map of allocations, and records errors to JSON.",
+									},
+									{
+										type: "object",
+										label: "output_report.json",
+									},
+									{
+										type: "stage",
+										label: "Stage 3 - Visual Report | Python / Pygments",
+										desc: "Annotates the original source with error messages and renders a syntax-highlighted PNG.",
+									},
+									{
+										type: "object",
+										label: "test.png",
+									},
+									{
+										type: "object",
+										label: "Annotated source - exact error locations",
+									},
+								]}
+							/>
 						</ProjectCard>
 
 						<ProjectCard
@@ -644,10 +532,10 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 
 						<ProjectCard
 							title="Hollywood Theatre Automation"
-							year="2024 · Freelance"
-							description="Built tooling for the Hollywood Theatre in Vancouver — a web-based marquee letter tracker and a tip-splitting system, saving <strong>5+ hours of manual work weekly</strong>."
+							year="2024 | Freelance"
+							description="Built tooling for the Hollywood Theatre in Vancouver - a web-based marquee letter tracker and a tip-splitting system, saving <strong>5+ hours of manual work weekly</strong>."
 							tags={["JavaScript", "Google Apps Script"]}
-							note="Source unavailable — client project."
+							note="Source unavailable - client project."
 							id="tips"
 						/>
 					</div>
@@ -659,19 +547,19 @@ const pageTitle = "Spencer Fletcher | Software Engineer";
 						<div class="skill-group">
 							<h3>Programming</h3>
 							<p>
-								Python · TypeScript · JavaScript · Java · C/C++ · Assembly ·
-								Erlang · R
+								Python | TypeScript | JavaScript | Java | C/C++ | Assembly ·
+								Erlang | R
 							</p>
 						</div>
 						<div class="skill-group">
 							<h3>Web & Frameworks</h3>
 							<p>
-								SvelteKit · Next.js · Django · Node.js · React Native · Tailwind
+								SvelteKit | Next.js | Django | Node.js | React Native | Tailwind
 							</p>
 						</div>
 						<div class="skill-group">
 							<h3>Infrastructure</h3>
-							<p>Git · Docker · PostgreSQL · AWS · CI/CD · Clang/LLVM</p>
+							<p>Git | Docker | PostgreSQL | AWS | CI/CD | Clang/LLVM</p>
 						</div>
 					</div>
 				</section>

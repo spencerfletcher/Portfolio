@@ -215,18 +215,16 @@ const hasDetails = Astro.slots.has("details");
 		overflow: hidden;
 	}
 
-	.details-content {
-		padding: 0.5rem 0 0.75rem;
-	}
-
-	/* ── Reusable panel layout ───────────────────────────────────── */
 	/* auto-fit collapses empty tracks: 1 panel fills the row, 2 sit side by
 	   side, and they stack on their own once a column can't hold 280px. */
-	.detail-panels {
+	.details-content {
+		padding: 0.5rem 0 0.75rem;
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
 		gap: 0.65rem;
 	}
+
+	/* ── Reusable panel layout ───────────────────────────────────── */
 
 	.detail-panel {
 		background: #0a0a0e;
@@ -328,12 +326,6 @@ const hasDetails = Astro.slots.has("details");
 		width: 1px;
 		height: 7px;
 		background: rgba(255, 255, 255, 0.1);
-	}
-
-	.pipeline-connector-artifact {
-		font-size: 0.6rem;
-		color: var(--text-secondary);
-		opacity: 0.45;
 	}
 
 	.pipeline-connector-caret {
