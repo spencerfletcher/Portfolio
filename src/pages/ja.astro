@@ -1,87 +1,9 @@
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Links</title>
-		<link rel="icon" type="image/png" href="/logo.png" />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300..700&display=swap"
-			rel="stylesheet"
-		/>
-		<style>
-			:root {
-				--bg: #0f0f13;
-				--text: #f0eff4;
-				--text-muted: #a09fb1;
-				--accent: #8b7cf7;
-				--border: rgba(255, 255, 255, 0.1);
-				--card: #1a1a23;
-			}
+---
+import Layout from "../layouts/Layout.astro";
+---
 
-			* {
-				margin: 0;
-				box-sizing: border-box;
-			}
-
-			body {
-				background: var(--bg);
-				color: var(--text);
-				font-family:
-					"DM Sans",
-					-apple-system,
-					sans-serif;
-				min-height: 100dvh;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				padding: 2rem;
-				-webkit-font-smoothing: antialiased;
-			}
-
-			.wrapper {
-				width: 100%;
-				max-width: 380px;
-			}
-
-			h1 {
-				font-size: 1.1rem;
-				font-weight: 600;
-				color: var(--text-muted);
-				letter-spacing: 0.06em;
-				text-transform: uppercase;
-				margin-bottom: 1.75rem;
-			}
-
-			.links {
-				display: flex;
-				flex-direction: column;
-				gap: 0.75rem;
-			}
-
-			.links a {
-				display: block;
-				padding: 0.9rem 1.25rem;
-				background: var(--card);
-				border: 1px solid var(--border);
-				border-radius: 10px;
-				color: var(--text);
-				text-decoration: none;
-				font-size: 0.95rem;
-				font-weight: 500;
-				transition:
-					border-color 0.15s ease,
-					background 0.15s ease;
-			}
-
-			.links a:hover {
-				border-color: var(--accent);
-				background: #22222e;
-			}
-		</style>
-	</head>
-	<body>
+<Layout title="Links" noindex>
+	<div class="page-center">
 		<div class="wrapper">
 			<h1>Links</h1>
 			<div class="links">
@@ -102,5 +24,57 @@
 				</a>
 			</div>
 		</div>
-	</body>
-</html>
+	</div>
+</Layout>
+
+<style>
+	.page-center {
+		min-height: 100dvh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: var(--space-8);
+	}
+
+	.wrapper {
+		width: 100%;
+		max-width: 380px;
+	}
+
+	/* Semantically the page heading, but visually it plays the section-label
+	   role — a display-size h1 would overwhelm a 380px column. */
+	h1 {
+		font-size: var(--text-lg);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--text-secondary);
+		margin-bottom: var(--space-6);
+	}
+
+	.links {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+	}
+
+	.links a {
+		display: block;
+		padding: 0.9rem 1.25rem;
+		background: var(--bg-card);
+		border: 1px solid var(--border);
+		border-radius: var(--radius-lg);
+		color: var(--text-primary);
+		text-decoration: none;
+		font-size: var(--text-base);
+		font-weight: 500;
+		transition:
+			border-color 0.15s ease,
+			background 0.15s ease;
+	}
+
+	.links a:hover {
+		border-color: var(--accent);
+		background: var(--bg-card-hover);
+	}
+</style>
