@@ -9,22 +9,10 @@ interface Props {
 	featured?: boolean;
 	note?: string;
 	id?: string;
-	/* Render the details panel expanded on load. The toggle still works. */
-	detailsOpen?: boolean;
 }
 
-const {
-	title,
-	year,
-	description,
-	tags,
-	links,
-	href,
-	featured,
-	note,
-	id,
-	detailsOpen = false,
-} = Astro.props;
+const { title, year, description, tags, links, href, featured, note, id } =
+	Astro.props;
 const hasDetails = Astro.slots.has("details");
 ---
 
@@ -53,13 +41,11 @@ const hasDetails = Astro.slots.has("details");
 		{
 			hasDetails && (
 				<button
-					class:list={["how-it-works-btn", { open: detailsOpen }]}
-					aria-expanded={String(detailsOpen)}
+					class="how-it-works-btn"
+					aria-expanded="false"
 					aria-controls={`details-${id}`}
 				>
-					<span class="btn-label">
-						{detailsOpen ? "Hide details" : "How it works"}
-					</span>
+					<span class="btn-label">How it works</span>
 					<span class="chevron" aria-hidden="true">▾</span>
 				</button>
 			)
@@ -67,10 +53,7 @@ const hasDetails = Astro.slots.has("details");
 	</div>
 	{
 		hasDetails && (
-			<div
-				class:list={["details-wrapper", { open: detailsOpen }]}
-				id={`details-${id}`}
-			>
+			<div class="details-wrapper" id={`details-${id}`}>
 				<div class="details-inner">
 					<div class="details-content">
 						<slot name="details" />
