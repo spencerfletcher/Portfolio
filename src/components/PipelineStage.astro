@@ -13,10 +13,8 @@ const { label, desc } = Astro.props;
 </div>
 
 <style>
-	/* Replaces the old .pipeline-stage-row flex wrapper, which only ever held
-	   this one span. */
 	.pipeline-stage-num {
 		display: block;
-		margin-bottom: 0.25rem;
+		margin-bottom: var(--space-1);
 	}
 </style>

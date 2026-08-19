@@ -1,626 +1,518 @@
 ---
+import Layout from "../layouts/Layout.astro";
 import HowItWorks from "../components/HowItWorks.astro";
 import ProjectCard from "../components/ProjectCard.astro";
-
-const pageTitle = "Spencer Fletcher | Software Engineer";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta
-			name="description"
-			content="Spencer Fletcher — software engineer and UBC computer science graduate. Experience with compiler tooling, full-stack web platforms, and mobile apps."
-		/>
-		<title>{pageTitle}</title>
+<Layout
+	title="Spencer Fletcher — Software Engineer"
+	description="Spencer Fletcher — software engineer and UBC computer science graduate. Experience with compiler tooling, full-stack web platforms, and mobile apps."
+>
+	<div class="page">
+		<main>
+			<header>
+				<div class="header-content">
+					<p class="eyebrow">
+						UBC Computer Science · 3.9 GPA · US Citizen · Open To Work
+					</p>
+					<h1>Spencer Fletcher</h1>
+					<p class="subtitle">
+						I'm a UBC CS grad who enjoys building tools that solve hard problems
+						— from <a href="#poly">market-making engines quoting real capital</a
+						>, to a <a href="#mem">Clang/LLVM memory-safety checker</a>, to a <a
+							href="#fork">recipe platform with git-style version control</a
+						>. I care about systems that are correct under pressure, not just
+						one-time demos.
+					</p>
+				</div>
 
-		<link rel="icon" type="image/png" href="/logo.png" />
+				<div class="header-cta">
+					<a href="mailto:spencer@spencerfletcher.com" class="cta-button">
+						Email Me
+					</a>
+					<a
+						target="_blank"
+						rel="noopener noreferrer"
+						href="/Spencer_Fletcher.pdf"
+						class="cta-button cta-button-secondary">Resume →</a
+					>
+					<a
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://linkedin.com/in/spencer-fletcher-dev"
+						class="cta-button cta-button-secondary">LinkedIn →</a
+					>
+				</div>
+			</header>
 
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=Roboto+Mono:wght@400;500&display=swap"
-			rel="stylesheet"
-		/>
-		<style is:global>
-			:root {
-				--bg-primary: #0f0f13;
-				--bg-card: #1a1a23;
-				--bg-card-hover: #22222e;
-				--bg-featured: #1c1c2e;
-				--text-primary: #f0eff4;
-				--text-secondary: #a09fb1;
-				--accent: #8b7cf7;
-				--accent-glow: rgba(139, 124, 247, 0.15);
-				--accent-subtle: rgba(139, 124, 247, 0.08);
-				--border: rgba(255, 255, 255, 0.13);
-				--font-body:
-					"DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-				--font-mono: "Roboto Mono", "SF Mono", monospace;
-			}
+			<section class="projects">
+				<h2>Projects</h2>
 
-			* {
-				margin: 0;
-				box-sizing: border-box;
-			}
+				<div class="projects-container">
+					<ProjectCard
+						featured
+						title="Prediction-Market Trading Engines"
+						year="2026 – Ongoing"
+						description="Two market-making engines quoting real capital on <strong>Polymarket US and Kalshi</strong> over persistent WebSocket feeds — <strong>55k contracts / $44k notional</strong> filled to date. Began as a cross-venue arbitrage system; measurement showed <strong>69% of detected edges were stale-feed artifacts</strong>, so the strategy was retired and rebuilt around resting quotes instead of racing to take. Exact-decimal money layer, crash recovery from venue state, 684 tests."
+						tags={["Python", "Websockets", "asyncio", "AWS"]}
+						links={[
+							{
+								label: "Market Maker →",
+								href: "https://github.com/spencerfletcher/market-maker",
+							},
+							{
+								label: "Arbitrage Engine →",
+								href: "https://github.com/spencerfletcher/arbitrage-engine",
+							},
+						]}
+						href="https://github.com/spencerfletcher/market-maker"
+						note="Market selection, tuned parameters, and results are withheld."
+						id="poly"
+					>
+						<HowItWorks
+							slot="details"
+							items={[
+								{
+									type: "object",
+									label: "Venue market universe — Polymarket US + Kalshi",
+								},
+								{
+									type: "stage",
+									label: "Stage 1 — Discovery Crawl · asyncio / REST",
+									desc: "Walks every listed market on both venues and normalizes two different venue schemas into one internal market shape.",
+								},
+								{
+									type: "object",
+									label: "market universe",
+								},
+								{
+									type: "stage",
+									label: "Stage 2 — Two-Stage Screen · Python",
+									desc: "Filter out books that are structurally invalid: No recent trades, too much competition, books without rebate potential. Almost everything dies here. Only survivors get a paid depth read.",
+								},
+								{
+									type: "object",
+									label: "screen_<timestamp>.csv",
+								},
+								{
+									type: "stage",
+									label: "Stage 3 — Quote Cycle · asyncio / WebSockets",
+									desc: "Per market, per interval: check the kill switch before any venue call, read the book (WebSocket if fresh enough, cache-busted REST otherwise), then join the touch or improve by exactly one tick. Cancel-and-replace only where our own price moved — an unchanged quote keeps its queue position.",
+								},
+								{
+									type: "object",
+									label: "resting orders on the venue",
+								},
+								{
+									type: "stage",
+									label: "Stage 4 — Fill Booking · Private order WebSocket",
+									desc: "Fills arrive on a bounded queue that drops oldest under pressure, safe because booking is cumulative-quantity based. Every fill is booked idempotently and its commission read back from the venue rather than modelled.",
+								},
+								{
+									type: "object",
+									label: "poly_live_mm_fills.csv",
+								},
+								{
+									type: "stage",
+									label: "Stage 5 — Durable State · fsync / atomic replace",
+									desc: 'Order intent is persisted before the order is transmitted, so the "sent, then died before the response" window is recoverable. On restart, belief is rebuilt from venue truth rather than from local memory.',
+								},
+								{
+									type: "object",
+									label: "maker_state_poly.json",
+								},
+								{
+									type: "object",
+									label:
+										"Quotes resting on books that can actually pay — with position, exposure and crash state provable at any instant",
+								},
+							]}
+						/>
+					</ProjectCard>
+					<ProjectCard
+						title="MemoryGuard"
+						year="2024"
+						description="A Clang/LLVM memory safety tool for C. Static instrumentation plus dynamic runtime analysis to detect memory leaks and dangling pointers, with annotated, syntax-highlighted error reports."
+						tags={["C++", "CMake", "Python"]}
+						links={[
+							{
+								label: "View Code →",
+								href: "https://github.com/spencerfletcher/MemoryGuard",
+							},
+						]}
+						href="https://github.com/spencerfletcher/MemoryGuard"
+						id="mem"
+					>
+						<HowItWorks
+							slot="details"
+							items={[
+								{ type: "object", label: "Your C File" },
+								{
+									type: "stage",
+									label: "Stage 1 — AST Instrumentation · Clang / LLVM",
+									desc: "Traverses the AST and injects analysis hooks around malloc, free, dereferences, and aliasing.",
+								},
+								{
+									type: "object",
+									label: "instrumented.c",
+								},
+								{
+									type: "stage",
+									label: "Stage 2 — Runtime Analysis · C++ shared library",
+									desc: "Tracks pointer state at runtime, builds a shadow map of allocations, and records errors to JSON.",
+								},
+								{
+									type: "object",
+									label: "output_report.json",
+								},
+								{
+									type: "stage",
+									label: "Stage 3 — Visual Report · Python / Pygments",
+									desc: "Annotates the original source with error messages and renders a syntax-highlighted PNG.",
+								},
+								{
+									type: "object",
+									label: "test.png",
+								},
+								{
+									type: "object",
+									label: "Annotated source — exact error locations",
+								},
+							]}
+						/>
+					</ProjectCard>
 
-			body {
-				background-color: var(--bg-primary);
-				color: var(--text-primary);
-				font-family: var(--font-body);
-				padding: 2rem;
-				display: flex;
-				justify-content: center;
-				line-height: 1.65;
-				-webkit-font-smoothing: antialiased;
-			}
+					<ProjectCard
+						title="UBC Medicine — Website Redesign"
+						year="2022 – 2023"
+						description="Redesigned UBC's Cadaver Donation Program webpage, driving a <strong>100%+ increase in donations</strong>. Also overhauled a staff directory serving hundreds of users, improving <strong>search speed by 250%</strong>."
+						tags={["HTML", "CSS", "JavaScript", "WordPress"]}
+						links={[
+							{
+								label: "View Code →",
+								href: "https://github.com/spencerfletcher/body-donation-site",
+							},
+							{
+								label: "Live Project →",
+								href: "https://cps.med.ubc.ca/body-donation/",
+							},
+						]}
+						href="https://cps.med.ubc.ca/body-donation/"
+						id="ubc"
+					/>
 
-			.container {
-				max-width: 860px;
-				width: 100%;
-			}
+					<ProjectCard
+						title="Fork: A Git-Style Recipe Platform"
+						year="2025 – Ongoing"
+						description="A full-stack recipe platform with <strong>Git-style version control</strong> for tracking recipe modifications and forking others' recipes. Built with SvelteKit and PostgreSQL, featuring user auth, image storage, and a public feed."
+						tags={["SvelteKit", "PostgreSQL", "TypeScript"]}
+						links={[
+							{
+								label: "View Code →",
+								href: "https://github.com/spencerfletcher/Fork",
+							},
+						]}
+						href="https://github.com/spencerfletcher/Fork"
+						id="fork"
+					/>
 
-			/* Typography */
-			h1 {
-				font-size: 3rem;
-				font-weight: 700;
-				letter-spacing: -0.03em;
-				line-height: 1.1;
-				margin-bottom: 1.25rem;
-			}
+					<ProjectCard
+						title="Hollywood Theatre Automation"
+						year="2024 · Freelance"
+						description="Built tooling for the Hollywood Theatre in Vancouver — a web-based marquee letter tracker and a tip-splitting system, saving <strong>5+ hours of manual work weekly</strong>."
+						tags={["JavaScript", "Google Apps Script"]}
+						note="Source unavailable — client project."
+						id="tips"
+					/>
+				</div>
+			</section>
 
-			h2 {
-				font-size: 1.1rem;
-				font-weight: 600;
-				text-transform: uppercase;
-				letter-spacing: 0.08em;
-				color: var(--text-secondary);
-				margin-bottom: 1.25rem;
-			}
-
-			h3 {
-				font-size: 1.2rem;
-				font-weight: 600;
-				margin-bottom: 0;
-			}
-
-			a {
-				color: var(--accent);
-				text-decoration: none;
-				font-weight: 500;
-				transition: color 0.2s ease;
-			}
-
-			a:hover {
-				color: var(--text-primary);
-			}
-
-			.subtitle > a {
-				font-weight: 600;
-				color: var(--text-primary);
-			}
-
-			.subtitle > a:hover {
-				color: var(--accent);
-			}
-
-			p {
-				margin-bottom: 0;
-			}
-
-			strong {
-				color: var(--text-primary);
-				font-weight: 600;
-			}
-
-			main {
-				margin-top: 3rem;
-			}
-
-			section {
-				margin-bottom: 3rem;
-			}
-
-			/* Header */
-			header {
-				padding-bottom: 3rem;
-				margin-bottom: 2.5rem;
-				border-bottom: 1px solid var(--border);
-			}
-
-			.eyebrow {
-				font-family: var(--font-mono);
-				font-size: 0.8rem;
-				color: var(--accent);
-				letter-spacing: 0.04em;
-				margin-bottom: 0.75rem;
-			}
-
-			.subtitle {
-				font-size: 1.1rem;
-				color: var(--text-secondary);
-				line-height: 1.7;
-				font-weight: 400;
-			}
-
-			.header-cta {
-				display: flex;
-				gap: 0.75rem;
-				margin-top: 2rem;
-			}
-
-			.cta-button {
-				display: inline-block;
-				padding: 0.6rem 1.4rem;
-				border-radius: 8px;
-				text-decoration: none;
-				font-weight: 600;
-				font-size: 0.85rem;
-				transition: all 0.2s ease;
-				border: 1.5px solid var(--accent);
-				background: var(--accent);
-				color: var(--bg-primary);
-				letter-spacing: 0.01em;
-			}
-
-			.cta-button:hover {
-				background: transparent;
-				color: var(--accent);
-			}
-
-			.cta-button-secondary {
-				background: transparent;
-				color: var(--text-primary);
-				border-color: var(--border);
-			}
-
-			.cta-button-secondary:hover {
-				border-color: var(--accent);
-				color: var(--accent);
-				background: var(--accent-subtle);
-			}
-
-			/* Projects */
-			.projects-container {
-				display: grid;
-				grid-template-columns: repeat(2, 1fr);
-				gap: 1rem;
-			}
-
-			/* Skills — compact inline layout */
-			.skills-inline {
-				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-				gap: 2rem;
-			}
-
-			.skill-group h3 {
-				font-family: var(--font-mono);
-				font-size: 0.75rem;
-				text-transform: uppercase;
-				letter-spacing: 0.08em;
-				color: var(--accent);
-				margin-bottom: 0.5rem;
-			}
-
-			.skill-group p {
-				color: var(--text-secondary);
-				font-size: 0.9rem;
-				line-height: 1.8;
-			}
-
-			/* Footer */
-			.social-links {
-				display: flex;
-				justify-content: center;
-				gap: 1.5rem;
-				padding: 2rem 0 3rem;
-				border-top: 1px solid var(--border);
-			}
-
-			.social-links a {
-				opacity: 0.4;
-				transition: opacity 0.2s ease;
-			}
-
-			.social-links a:hover {
-				opacity: 1;
-			}
-
-			.social-links img {
-				width: 28px;
-				height: 28px;
-				filter: brightness(0) invert(1);
-			}
-
-			/* Responsive */
-			@media (max-width: 640px) {
-				body {
-					padding: 1.25rem;
-				}
-
-				h1 {
-					font-size: 2.25rem;
-				}
-
-				.projects-container {
-					grid-template-columns: 1fr;
-				}
-
-				.header-cta {
-					flex-wrap: wrap;
-				}
-			}
-
-			@media (min-width: 768px) {
-				body {
-					padding: 3rem;
-				}
-
-				.skills-inline {
-					grid-template-columns: 1fr 1fr 1fr;
-				}
-			}
-
-			/* Subtle entrance animation */
-			@keyframes fadeUp {
-				from {
-					opacity: 0;
-					transform: translateY(12px);
-				}
-				to {
-					opacity: 1;
-					transform: translateY(0);
-				}
-			}
-
-			header {
-				animation: fadeUp 0.5s ease both;
-			}
-
-			.projects {
-				animation: fadeUp 0.5s ease 0.1s both;
-			}
-
-			.tools {
-				animation: fadeUp 0.5s ease 0.2s both;
-			}
-
-			.social-links {
-				animation: fadeUp 0.5s ease 0.3s both;
-			}
-
-			.footer-email {
-				font-family: var(--font-mono);
-				font-size: 0.8rem;
-				color: var(--text-secondary);
-				opacity: 0.6;
-				align-self: start;
-			}
-			.project-card {
-				transition: box-shadow 0.5s ease;
-				border-radius: 12px; /* match your existing card radius */
-			}
-
-			.glow {
-				animation: card-glow 1.5s ease-out;
-			}
-
-			@keyframes card-glow {
-				0% {
-					box-shadow: 0 0 0 0 var(--accent-glow);
-				}
-				15% {
-					box-shadow: 0 0 24px 4px rgba(124, 111, 240, 0.55);
-				} /* quick ramp up */
-				70% {
-					box-shadow: 0 0 24px 4px rgba(124, 111, 240, 0.55);
-				} /* hold — same value */
-				100% {
-					box-shadow: 0 0 0 0 rgba(124, 111, 240, 0);
-				} /* quick fade out */
-			}
-		</style>
-	</head>
-	<body>
-		<div class="container">
-			<main>
-				<header>
-					<div class="header-content">
-						<p class="eyebrow">
-							UBC Computer Science · 3.9 GPA · US Citizen · Open To Work
-						</p>
-						<h1>Spencer Fletcher</h1>
-						<p class="subtitle">
-							I'm a UBC CS grad who enjoys building tools that solve hard
-							problems — from
-							<a href="#poly"> market-making engines quoting real capital</a>,
-							to a <a href="#mem">Clang/LLVM memory-safety checker</a>, to a
-							<a href="#fork">
-								recipe platform with git-style version control
-							</a>. I care about systems that are correct under pressure, not
-							just one-time demos.
+			<section class="tools">
+				<h2>Technical Skills</h2>
+				<div class="skills-inline">
+					<div class="skill-group">
+						<h3>Programming</h3>
+						<p>
+							Python · TypeScript · JavaScript · Java · C/C++ · Assembly ·
+							Erlang · R
 						</p>
 					</div>
-
-					<div class="header-cta">
-						<a href="mailto:spencer@spencerfletcher.com" class="cta-button">
-							Email Me
-						</a>
-						<a
-							target="_blank"
-							href="/Spencer_Fletcher.pdf"
-							class="cta-button cta-button-secondary">Resume ↗</a
-						>
-						<a
-							target="_blank"
-							href="https://linkedin.com/in/spencer-fletcher-dev"
-							class="cta-button cta-button-secondary">LinkedIn ↗</a
-						>
+					<div class="skill-group">
+						<h3>Web & Frameworks</h3>
+						<p>
+							SvelteKit · Next.js · Django · Node.js · React Native · Tailwind
+						</p>
 					</div>
-				</header>
-
-				<section class="projects">
-					<h2>Projects</h2>
-
-					<div class="projects-container">
-						<ProjectCard
-							featured
-							title="Prediction-Market Trading Engines"
-							year="2026 - Ongoing"
-							description="Two market-making engines quoting real capital on <strong>Polymarket US and Kalshi</strong> over persistent WebSocket feeds — <strong>55k contracts / $44k notional</strong> filled to date. Began as a cross-venue arbitrage system; measurement showed <strong>69% of detected edges were stale-feed artifacts</strong>, so the strategy was retired and rebuilt around resting quotes instead of racing to take. Exact-decimal money layer, crash recovery from venue state, 684 tests."
-							tags={["Python", "Websockets", "asyncio", "AWS"]}
-							links={[
-								{
-									label: "Market Maker →",
-									href: "https://github.com/spencerfletcher/market-maker",
-								},
-								{
-									label: "Arbitrage Engine →",
-									href: "https://github.com/spencerfletcher/arbitrage-engine",
-								},
-							]}
-							href="https://github.com/spencerfletcher/market-maker"
-							note="Market selection, tuned parameters, and results are withheld."
-							id="poly"
-						>
-							<HowItWorks
-								slot="details"
-								items={[
-									{
-										type: "object",
-										label: "Venue market universe - Polymarket US + Kalshi",
-									},
-									{
-										type: "stage",
-										label: "Stage 1 - Discovery Crawl | asyncio / REST",
-										desc: "Walks every listed market on both venues and normalizes two different venue schemas into one internal market shape.",
-									},
-									{
-										type: "object",
-										label: "market universe",
-									},
-									{
-										type: "stage",
-										label: "Stage 2 - Two-Stage Screen | Python",
-										desc: "Filter out books that are structurally invalid: No recent trades, too much competition, books without rebate potential. Almost everything dies here. Only survivors get a paid depth read.",
-									},
-									{
-										type: "object",
-										label: "screen_<timestamp>.csv",
-									},
-									{
-										type: "stage",
-										label: "Stage 3 - Quote Cycle | asyncio / WebSockets",
-										desc: "Per market, per interval: check the kill switch before any venue call, read the book (WebSocket if fresh enough, cache-busted REST otherwise), then join the touch or improve by exactly one tick. Cancel-and-replace only where our own price moved - an unchanged quote keeps its queue position.",
-									},
-									{
-										type: "object",
-										label: "resting orders on the venue",
-									},
-									{
-										type: "stage",
-										label: "Stage 4 - Fill Booking | Private order WebSocket",
-										desc: "Fills arrive on a bounded queue that drops oldest under pressure, safe because booking is cumulative-quantity based. Every fill is booked idempotently and its commission read back from the venue rather than modelled.",
-									},
-									{
-										type: "object",
-										label: "poly_live_mm_fills.csv",
-									},
-									{
-										type: "stage",
-										label: "Stage 5 - Durable State | fsync / atomic replace",
-										desc: 'Order intent is persisted before the order is transmitted, so the "sent, then died before the response" window is recoverable. On restart, belief is rebuilt from venue truth rather than from local memory.',
-									},
-									{
-										type: "object",
-										label: "maker_state_poly.json",
-									},
-									{
-										type: "object",
-										label:
-											"Quotes resting on books that can actually pay - with position, exposure and crash state provable at any instant",
-									},
-								]}
-							/>
-						</ProjectCard>
-						<ProjectCard
-							title="MemoryGuard"
-							year="2024"
-							description="A Clang/LLVM memory safety tool for C. Static instrumentation plus dynamic runtime analysis to detect memory leaks and dangling pointers, with annotated, syntax-highlighted error reports."
-							tags={["C++", "CMake", "Python"]}
-							links={[
-								{
-									label: "View Code →",
-									href: "https://github.com/spencerfletcher/MemoryGuard",
-								},
-							]}
-							href="https://github.com/spencerfletcher/MemoryGuard"
-							id="mem"
-						>
-							<HowItWorks
-								slot="details"
-								items={[
-									{ type: "object", label: "Your C File" },
-									{
-										type: "stage",
-										label: "Stage 1 - AST Instrumentation | Clang / LLVM",
-										desc: "Traverses the AST and injects analysis hooks around malloc, free, dereferences, and aliasing.",
-									},
-									{
-										type: "object",
-										label: "instrumented.c",
-									},
-									{
-										type: "stage",
-										label: "Stage 2 - Runtime Analysis | C++ shared library",
-										desc: "Tracks pointer state at runtime, builds a shadow map of allocations, and records errors to JSON.",
-									},
-									{
-										type: "object",
-										label: "output_report.json",
-									},
-									{
-										type: "stage",
-										label: "Stage 3 - Visual Report | Python / Pygments",
-										desc: "Annotates the original source with error messages and renders a syntax-highlighted PNG.",
-									},
-									{
-										type: "object",
-										label: "test.png",
-									},
-									{
-										type: "object",
-										label: "Annotated source - exact error locations",
-									},
-								]}
-							/>
-						</ProjectCard>
-
-						<ProjectCard
-							title="UBC Medicine - Website Redesign"
-							year="2022 - 2023"
-							description="Redesigned UBC's Cadaver Donation Program webpage, driving a <strong>100%+ increase in donations</strong>. Also overhauled a staff directory serving hundreds of users, improving <strong>search speed by 250%</strong>."
-							tags={["HTML", "CSS", "JavaScript", "WordPress"]}
-							links={[
-								{
-									label: "View Code →",
-									href: "https://github.com/spencerfletcher/body-donation-site",
-								},
-								{
-									label: "Live Project →",
-									href: "https://cps.med.ubc.ca/body-donation/",
-								},
-							]}
-							href="https://cps.med.ubc.ca/body-donation/"
-							id="ubc"
-						/>
-
-						<ProjectCard
-							title="Fork: A Git-Style Recipe Platform"
-							year="2025 - Ongoing"
-							description="A full-stack recipe platform with <strong>Git-style version control</strong> for tracking recipe modifications and forking others' recipes. Built with SvelteKit and PostgreSQL, featuring user auth, image storage, and a public feed."
-							tags={["SvelteKit", "PostgreSQL", "TypeScript"]}
-							links={[
-								{
-									label: "View Code →",
-									href: "https://github.com/spencerfletcher/Fork",
-								},
-							]}
-							href="https://github.com/spencerfletcher/Fork"
-							id="fork"
-						/>
-
-						<ProjectCard
-							title="Hollywood Theatre Automation"
-							year="2024 | Freelance"
-							description="Built tooling for the Hollywood Theatre in Vancouver - a web-based marquee letter tracker and a tip-splitting system, saving <strong>5+ hours of manual work weekly</strong>."
-							tags={["JavaScript", "Google Apps Script"]}
-							note="Source unavailable - client project."
-							id="tips"
-						/>
+					<div class="skill-group">
+						<h3>Infrastructure</h3>
+						<p>Git · Docker · PostgreSQL · AWS · CI/CD · Clang/LLVM</p>
 					</div>
-				</section>
+				</div>
+			</section>
+		</main>
 
-				<section class="tools">
-					<h2>Technical Skills</h2>
-					<div class="skills-inline">
-						<div class="skill-group">
-							<h3>Programming</h3>
-							<p>
-								Python | TypeScript | JavaScript | Java | C/C++ | Assembly ·
-								Erlang | R
-							</p>
-						</div>
-						<div class="skill-group">
-							<h3>Web & Frameworks</h3>
-							<p>
-								SvelteKit | Next.js | Django | Node.js | React Native | Tailwind
-							</p>
-						</div>
-						<div class="skill-group">
-							<h3>Infrastructure</h3>
-							<p>Git | Docker | PostgreSQL | AWS | CI/CD | Clang/LLVM</p>
-						</div>
-					</div>
-				</section>
-			</main>
+		<footer class="social-links">
+			<a
+				href="https://github.com/spencerfletcher"
+				target="_blank"
+				rel="noopener noreferrer"
+				aria-label="GitHub Profile"
+			>
+				<img src="/github.svg" height="24" width="24" alt="" />
+			</a>
+			<a
+				href="https://www.linkedin.com/in/spencer-fletcher-dev"
+				target="_blank"
+				rel="noopener noreferrer"
+				aria-label="LinkedIn Profile"
+			>
+				<img src="/linkedin.png" height="24" width="24" alt="" />
+			</a>
+			<a href="mailto:spencer@spencerfletcher.com" class="footer-email">
+				spencer@spencerfletcher.com
+			</a>
+		</footer>
+	</div>
+</Layout>
 
-			<footer class="social-links">
-				<a
-					href="https://github.com/spencerfletcher"
-					target="_blank"
-					rel="noopener noreferrer"
-					aria-label="GitHub Profile"
-				>
-					<img src="/github.svg" height="24" width="24" alt="" />
-				</a>
-				<a
-					href="https://www.linkedin.com/in/spencer-fletcher-dev"
-					target="_blank"
-					rel="noopener noreferrer"
-					aria-label="LinkedIn Profile"
-				>
-					<img src="/linkedin.png" height="24" width="24" alt="" />
-				</a>
-				<a href="mailto:spencer@spencerfletcher.com" class="footer-email">
-					spencer@spencerfletcher.com
-				</a>
-			</footer>
-		</div>
-		<script>
-			document
-				.querySelectorAll(".projects-container article[role='link']")
-				.forEach((article) => {
-					// Stop link clicks from also triggering the card's onclick
-					article.querySelectorAll(".links a").forEach((a) => {
-						a.addEventListener("click", (e) => e.stopPropagation());
-					});
-					// Enable keyboard navigation (Enter/Space) on cards
-					article.addEventListener("keydown", (e) => {
-						const event = e as KeyboardEvent;
-						if (event.key === "Enter" || event.key === " ") {
-							e.preventDefault();
-							(article as HTMLElement).click();
-						}
-					});
-				});
-			document.querySelectorAll(".subtitle > a").forEach((link) => {
-				link.addEventListener("click", (e) => {
-					if (!link.getAttribute("href")) return;
-					const href = link.getAttribute("href"); // strip the #
-					if (!href) return;
-					const id = href.slice(1);
-					const card = document.getElementById(id);
-					if (!card) return;
-					e.preventDefault(); // take over so we can smooth-scroll + glow
-					card.scrollIntoView({ behavior: "smooth", block: "center" });
-					card.classList.remove("glow");
-					void card.offsetWidth;
-					card.classList.add("glow");
-				});
-			});
-		</script>
-	</body>
-</html>
+<style is:global>
+	.page {
+		max-width: 860px;
+		width: 100%;
+		margin: 0 auto;
+		padding: var(--space-8);
+	}
+
+	h1 {
+		margin-bottom: var(--space-4);
+	}
+
+	h2 {
+		margin-bottom: var(--space-4);
+	}
+
+	.subtitle > a {
+		font-weight: 600;
+		color: var(--text-primary);
+	}
+
+	.subtitle > a:hover {
+		color: var(--accent);
+	}
+
+	main {
+		margin-top: var(--space-12);
+	}
+
+	section {
+		margin-bottom: var(--space-12);
+	}
+
+	/* Header */
+	header {
+		padding-bottom: var(--space-12);
+		margin-bottom: var(--space-8);
+		border-bottom: 1px solid var(--border);
+	}
+
+	.eyebrow {
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		color: var(--accent);
+		letter-spacing: 0.04em;
+		margin-bottom: var(--space-3);
+	}
+
+	.subtitle {
+		font-size: var(--text-lg);
+		color: var(--text-secondary);
+		line-height: 1.7;
+		font-weight: 400;
+	}
+
+	.header-cta {
+		display: flex;
+		gap: var(--space-3);
+		margin-top: var(--space-8);
+	}
+
+	.cta-button {
+		display: inline-block;
+		padding: 0.6rem 1.4rem;
+		border-radius: 8px;
+		text-decoration: none;
+		font-weight: 600;
+		font-size: var(--text-sm);
+		transition: all 0.2s ease;
+		border: 1.5px solid var(--accent);
+		background: var(--accent);
+		color: var(--bg-primary);
+		letter-spacing: 0.01em;
+	}
+
+	.cta-button:hover {
+		background: transparent;
+		color: var(--accent);
+	}
+
+	.cta-button-secondary {
+		background: transparent;
+		color: var(--text-primary);
+		border-color: var(--border);
+	}
+
+	.cta-button-secondary:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+		background: var(--accent-subtle);
+	}
+
+	/* Projects */
+	.projects-container {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--space-4);
+	}
+
+	/* Skills — compact inline layout */
+	.skills-inline {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: var(--space-8);
+	}
+
+	.skill-group h3 {
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--accent);
+		margin-bottom: var(--space-2);
+	}
+
+	.skill-group p {
+		color: var(--text-secondary);
+		font-size: var(--text-base);
+		line-height: 1.8;
+	}
+
+	/* Footer */
+	.social-links {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: var(--space-6);
+		padding: var(--space-8) 0 var(--space-12);
+		border-top: 1px solid var(--border);
+	}
+
+	.social-links a {
+		opacity: var(--opacity-faint);
+		transition: opacity 0.2s ease;
+	}
+
+	.social-links a:hover {
+		opacity: 1;
+	}
+
+	.social-links img {
+		width: 28px;
+		height: 28px;
+		filter: brightness(0) invert(1);
+	}
+
+	.footer-email {
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		color: var(--text-tertiary);
+	}
+
+	/* Responsive */
+	@media (max-width: 640px) {
+		.page {
+			padding: var(--space-4);
+		}
+
+		.projects-container {
+			grid-template-columns: 1fr;
+		}
+
+		.header-cta {
+			flex-wrap: wrap;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.page {
+			padding: var(--space-12);
+		}
+
+		.skills-inline {
+			grid-template-columns: 1fr 1fr 1fr;
+		}
+	}
+
+	/* Subtle entrance animation */
+	@keyframes fadeUp {
+		from {
+			opacity: 0;
+			transform: translateY(12px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	header {
+		animation: fadeUp 0.5s ease both;
+	}
+
+	.projects {
+		animation: fadeUp 0.5s ease 0.1s both;
+	}
+
+	.tools {
+		animation: fadeUp 0.5s ease 0.2s both;
+	}
+
+	.social-links {
+		animation: fadeUp 0.5s ease 0.3s both;
+	}
+
+	/* Flashes a card when the hero text links to it. */
+	.glow {
+		animation: card-glow 1.5s ease-out;
+	}
+
+	@keyframes card-glow {
+		0% {
+			box-shadow: 0 0 0 0 var(--accent-glow);
+		}
+		15% {
+			box-shadow: 0 0 24px 4px rgba(124, 111, 240, 0.55);
+		}
+		70% {
+			box-shadow: 0 0 24px 4px rgba(124, 111, 240, 0.55);
+		}
+		100% {
+			box-shadow: 0 0 0 0 rgba(124, 111, 240, 0);
+		}
+	}
+</style>
+
+<script>
+	document.querySelectorAll(".subtitle > a").forEach((link) => {
+		link.addEventListener("click", (e) => {
+			const href = link.getAttribute("href");
+			if (!href) return;
+			const card = document.getElementById(href.slice(1));
+			if (!card) return;
+			e.preventDefault(); // take over so we can smooth-scroll + glow
+			card.scrollIntoView({ behavior: "smooth", block: "center" });
+			card.classList.remove("glow");
+			void (card as HTMLElement).offsetWidth;
+			card.classList.add("glow");
+		});
+	});
+</script>
