@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
+	site: 'https://spencerfletcher.com',
 	integrations: [svelte(), sitemap({
 		filter: (page) => !page.includes('/ja') && !page.includes('/marquee'),
 	})]

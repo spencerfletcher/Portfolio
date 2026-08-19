@@ -18,13 +18,21 @@ const { title, description, noindex = false } = Astro.props;
 		{description && <meta name="description" content={description} />}
 		{noindex && <meta name="robots" content="noindex" />}
 		<title>{title}</title>
+		<meta name="theme-color" content="#0f0f13" />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={title} />
+		{description && <meta property="og:description" content={description} />}
+		<meta property="og:url" content={Astro.url} />
+		<meta name="twitter:card" content="summary" />
+		<link rel="canonical" href={Astro.url} />
 
 		<link rel="icon" type="image/png" href="/logo.png" />
 
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=Roboto+Mono:wght@400;500&display=swap"
+			href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=Space+Mono:wght@400;700&display=swap"
 			rel="stylesheet"
 		/>
 
@@ -32,6 +40,10 @@ const { title, description, noindex = false } = Astro.props;
 			* {
 				margin: 0;
 				box-sizing: border-box;
+			}
+
+			html {
+				color-scheme: dark;
 			}
 
 			body {
@@ -51,6 +63,7 @@ const { title, description, noindex = false } = Astro.props;
 				font-weight: 700;
 				letter-spacing: -0.03em;
 				line-height: 1.1;
+				text-wrap: balance;
 			}
 
 			h2 {
