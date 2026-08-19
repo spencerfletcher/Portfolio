@@ -277,8 +277,10 @@ import ProjectCard from "../components/ProjectCard.astro";
 
 <style is:global>
 	.page {
+		/* content-box so the 860px is the measure itself — the responsive
+		   padding below sits outside it rather than eating into it. */
+		box-sizing: content-box;
 		max-width: 860px;
-		width: 100%;
 		margin: 0 auto;
 		padding: var(--space-8);
 	}
