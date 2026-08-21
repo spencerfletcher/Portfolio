@@ -18,13 +18,20 @@ const hasDetails = Astro.slots.has("details");
 
 <article class:list={[{ featured }]} id={id}>
 	{featured && <div class="featured-label">Featured</div>}
-	{/* The title anchor stretches over the whole card via ::after, so the card
+	{
+		/* The title anchor stretches over the whole card via ::after, so the card
 	    is clickable without giving up real link behaviour (cmd-click, middle
-	    click, copy link, screen-reader announcement). */}
+	    click, copy link, screen-reader announcement). */
+	}
 	<h3>
 		{
 			href ? (
-				<a class="card-link" href={href} target="_blank" rel="noopener noreferrer">
+				<a
+					class="card-link"
+					href={href}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
 					{title}
 				</a>
 			) : (
@@ -46,7 +53,9 @@ const hasDetails = Astro.slots.has("details");
 					aria-controls={`details-${id}`}
 				>
 					<span class="btn-label">How it works</span>
-					<span class="chevron" aria-hidden="true">▾</span>
+					<span class="chevron" aria-hidden="true">
+						▾
+					</span>
 				</button>
 			)
 		}
