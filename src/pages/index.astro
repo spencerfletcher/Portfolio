@@ -12,9 +12,7 @@ import ProjectCard from "../components/ProjectCard.astro";
 		<main>
 			<header>
 				<div class="header-content">
-					<p class="eyebrow">
-						Open to work · UBC CS · US citizen
-					</p>
+					<p class="eyebrow">Open to work · UBC CS · US citizen</p>
 					<h1>Spencer Fletcher</h1>
 					<p class="subtitle">
 						I’m a UBC CS grad who enjoys building tools that solve hard problems
@@ -115,7 +113,7 @@ import ProjectCard from "../components/ProjectCard.astro";
 								{
 									type: "stage",
 									label: "Stage 5 — Durable State · fsync / atomic replace",
-									desc: 'Order intent is persisted before the order is transmitted, so the “sent, then died before the response” window is recoverable. On restart, belief is rebuilt from venue truth rather than from local memory.',
+									desc: "Order intent is persisted before the order is transmitted, so the “sent, then died before the response” window is recoverable. On restart, belief is rebuilt from venue truth rather than from local memory.",
 								},
 								{
 									type: "object",
@@ -129,6 +127,26 @@ import ProjectCard from "../components/ProjectCard.astro";
 							]}
 						/>
 					</ProjectCard>
+
+					<ProjectCard
+						title="Fork: A Git-Style Recipe Platform"
+						year="2025 - Ongoing"
+						description="A full-stack recipe platform with <strong>Git-style version control</strong> for tracking recipe modifications and forking others’ recipes. Built with SvelteKit and PostgreSQL, featuring user auth, image storage, and a public feed."
+						tags={["SvelteKit", "PostgreSQL", "TypeScript"]}
+						links={[
+							{
+								label: "View Code →",
+								href: "https://github.com/spencerfletcher/Fork",
+							},
+							{
+								label: "Live Project →",
+								href: "https://recipes.spencerfletcher.com",
+							},
+						]}
+						href="https://github.com/spencerfletcher/Fork"
+						id="fork"
+					/>
+
 					<ProjectCard
 						title="MemoryGuard"
 						year="2024"
@@ -199,25 +217,6 @@ import ProjectCard from "../components/ProjectCard.astro";
 						]}
 						href="https://cps.med.ubc.ca/body-donation/"
 						id="ubc"
-					/>
-
-					<ProjectCard
-						title="Fork: A Git-Style Recipe Platform"
-						year="2025 - Ongoing"
-						description="A full-stack recipe platform with <strong>Git-style version control</strong> for tracking recipe modifications and forking others’ recipes. Built with SvelteKit and PostgreSQL, featuring user auth, image storage, and a public feed."
-						tags={["SvelteKit", "PostgreSQL", "TypeScript"]}
-						links={[
-							{
-								label: "View Code →",
-								href: "https://github.com/spencerfletcher/Fork",
-							},
-							{
-								label: "Live Project →",
-								href: "https://recipes.spencerfletcher.com",
-							},
-						]}
-						href="https://github.com/spencerfletcher/Fork"
-						id="fork"
 					/>
 
 					<ProjectCard
