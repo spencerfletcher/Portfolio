@@ -55,9 +55,13 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     display: grid;
-    grid-template-columns: 2fr 3fr;
     gap: var(--space-4);
     align-items: start;
+  }
+
+  /* Two blocks (pipeline + demo) split 40/60; one block fills the row. */
+  .detail-row [data-project]:has(> * + *) {
+    grid-template-columns: 2fr 3fr;
   }
 
   .detail-row [data-project][hidden] {
@@ -95,7 +99,7 @@
   }
 
   @media (max-width: 640px) {
-    .detail-row [data-project] {
+    .detail-row [data-project]:has(> * + *) {
       grid-template-columns: 1fr;
     }
   }

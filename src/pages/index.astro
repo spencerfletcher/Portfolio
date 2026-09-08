@@ -68,67 +68,8 @@ import MemoryGuardDemo from "../components/MemoryGuardDemo.astro";
             href="https://github.com/spencerfletcher/market-maker"
             note="Market selection, tuned parameters, and results are withheld."
             id="poly"
-          >
-            <HowItWorks
-              slot="details"
-              items={[
-                {
-                  type: "object",
-                  label: "Venue market universe — Polymarket US + Kalshi",
-                },
-                {
-                  type: "stage",
-                  label: "Stage 1 — Discovery Crawl · asyncio / REST",
-                  desc: "Walks every listed market on both venues and normalizes two different venue schemas into one internal market shape.",
-                },
-                {
-                  type: "object",
-                  label: "market universe",
-                },
-                {
-                  type: "stage",
-                  label: "Stage 2 — Two-Stage Screen · Python",
-                  desc: "Filter out books that are structurally invalid: No recent trades, too much competition, books without rebate potential. Almost everything dies here. Only survivors get a paid depth read.",
-                },
-                {
-                  type: "object",
-                  label: "screen_<timestamp>.csv",
-                },
-                {
-                  type: "stage",
-                  label: "Stage 3 — Quote Cycle · asyncio / WebSockets",
-                  desc: "Per market, per interval: check the kill switch before any venue call, read the book (WebSocket if fresh enough, cache-busted REST otherwise), then join the touch or improve by exactly one tick. Cancel-and-replace only where our own price moved — an unchanged quote keeps its queue position.",
-                },
-                {
-                  type: "object",
-                  label: "resting orders on the venue",
-                },
-                {
-                  type: "stage",
-                  label: "Stage 4 — Fill Booking · Private order WebSocket",
-                  desc: "Fills arrive on a bounded queue that drops oldest under pressure, safe because booking is cumulative-quantity based. Every fill is booked idempotently and its commission read back from the venue rather than modelled.",
-                },
-                {
-                  type: "object",
-                  label: "poly_live_mm_fills.csv",
-                },
-                {
-                  type: "stage",
-                  label: "Stage 5 — Durable State · fsync / atomic replace",
-                  desc: "Order intent is persisted before the order is transmitted, so the “sent, then died before the response” window is recoverable. On restart, belief is rebuilt from venue truth rather than from local memory.",
-                },
-                {
-                  type: "object",
-                  label: "maker_state_poly.json",
-                },
-                {
-                  type: "object",
-                  label:
-                    "Quotes resting on books that can actually pay — with position, exposure and crash state provable at any instant",
-                },
-              ]}
-            />
-          </ProjectCard>
+            panel
+          />
 
           <ProjectCard
             title="Fork: A Git-Style Recipe Platform"
@@ -194,6 +135,66 @@ import MemoryGuardDemo from "../components/MemoryGuardDemo.astro";
           />
 
           <ProjectDetailPanel>
+            <div data-project="poly" hidden>
+              <HowItWorks
+                items={[
+                  {
+                    type: "object",
+                    label: "Venue market universe — Polymarket US + Kalshi",
+                  },
+                  {
+                    type: "stage",
+                    label: "Stage 1 — Discovery Crawl · asyncio / REST",
+                    desc: "Walks every listed market on both venues and normalizes two different venue schemas into one internal market shape.",
+                  },
+                  {
+                    type: "object",
+                    label: "market universe",
+                  },
+                  {
+                    type: "stage",
+                    label: "Stage 2 — Two-Stage Screen · Python",
+                    desc: "Filter out books that are structurally invalid: No recent trades, too much competition, books without rebate potential. Almost everything dies here. Only survivors get a paid depth read.",
+                  },
+                  {
+                    type: "object",
+                    label: "screen_<timestamp>.csv",
+                  },
+                  {
+                    type: "stage",
+                    label: "Stage 3 — Quote Cycle · asyncio / WebSockets",
+                    desc: "Per market, per interval: check the kill switch before any venue call, read the book (WebSocket if fresh enough, cache-busted REST otherwise), then join the touch or improve by exactly one tick. Cancel-and-replace only where our own price moved — an unchanged quote keeps its queue position.",
+                  },
+                  {
+                    type: "object",
+                    label: "resting orders on the venue",
+                  },
+                  {
+                    type: "stage",
+                    label: "Stage 4 — Fill Booking · Private order WebSocket",
+                    desc: "Fills arrive on a bounded queue that drops oldest under pressure, safe because booking is cumulative-quantity based. Every fill is booked idempotently and its commission read back from the venue rather than modelled.",
+                  },
+                  {
+                    type: "object",
+                    label: "poly_live_mm_fills.csv",
+                  },
+                  {
+                    type: "stage",
+                    label: "Stage 5 — Durable State · fsync / atomic replace",
+                    desc: "Order intent is persisted before the order is transmitted, so the “sent, then died before the response” window is recoverable. On restart, belief is rebuilt from venue truth rather than from local memory.",
+                  },
+                  {
+                    type: "object",
+                    label: "maker_state_poly.json",
+                  },
+                  {
+                    type: "object",
+                    label:
+                      "Quotes resting on books that can actually pay — with position, exposure and crash state provable at any instant",
+                  },
+                ]}
+              />
+            </div>
             <div data-project="mem" hidden>
               <HowItWorks
                 items={[
