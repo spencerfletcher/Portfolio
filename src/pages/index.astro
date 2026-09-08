@@ -4,6 +4,7 @@ import HowItWorks from "../components/HowItWorks.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import ProjectDetailPanel from "../components/ProjectDetailPanel.astro";
 import MemoryGuardDemo from "../components/MemoryGuardDemo.astro";
+import ForkDemo from "../components/ForkDemo.astro";
 ---
 
 <Layout
@@ -88,6 +89,7 @@ import MemoryGuardDemo from "../components/MemoryGuardDemo.astro";
             ]}
             href="https://github.com/spencerfletcher/Fork"
             id="fork"
+            panel
           />
 
           <ProjectCard
@@ -194,6 +196,9 @@ import MemoryGuardDemo from "../components/MemoryGuardDemo.astro";
                   },
                 ]}
               />
+            </div>
+            <div data-project="fork" hidden>
+              <ForkDemo />
             </div>
             <div data-project="mem" hidden>
               <HowItWorks
