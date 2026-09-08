@@ -9,10 +9,22 @@ interface Props {
   featured?: boolean;
   note?: string;
   id?: string;
+  /* Content lives in the shared ProjectDetailPanel row, keyed by `id`. */
+  panel?: boolean;
 }
 
-const { title, year, description, tags, links, href, featured, note, id } =
-  Astro.props;
+const {
+  title,
+  year,
+  description,
+  tags,
+  links,
+  href,
+  featured,
+  note,
+  id,
+  panel,
+} = Astro.props;
 const hasDetails = Astro.slots.has("details");
 ---
 
@@ -46,11 +58,12 @@ const hasDetails = Astro.slots.has("details");
       {tags.map((tag) => <span class="tag">{tag}</span>)}
     </div>
     {
-      hasDetails && (
+      (hasDetails || panel) && (
         <button
           class="how-it-works-btn"
           aria-expanded="false"
-          aria-controls={`details-${id}`}
+          aria-controls={panel ? "project-detail-panel" : `details-${id}`}
+          data-panel-target={panel ? id : undefined}
         >
           <span class="btn-label">How it works</span>
           <span class="chevron" aria-hidden="true">
@@ -159,7 +172,7 @@ const hasDetails = Astro.slots.has("details");
     line-height: 1.65;
   }
 
-  /* of-type, not nth-child: Astro drops this component's <script> into the container as a sibling, which would otherwise flip the parity. */
+  /* of-type, not nth-child: Astro drops this component's script tag into the container as a sibling, which would otherwise flip the parity. */
   .projects-container article:last-of-type:nth-of-type(even) {
     grid-column: 1;
   }
@@ -342,9 +355,10 @@ const hasDetails = Astro.slots.has("details");
     flex-shrink: 0;
   }
 
-  .pipeline-stage-desc {
-    font-size: var(--text-2xs);
-    color: var(--text-tertiary);
+  /* Outscores `article p` so the in-card and shared-panel pipelines match. */
+  .projects-container .pipeline-stage-desc {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
     line-height: 1.5;
     font-family: var(--font-mono);
   }
@@ -398,7 +412,9 @@ const hasDetails = Astro.slots.has("details");
 
 <script>
   document
-    .querySelectorAll<HTMLButtonElement>(".how-it-works-btn")
+    .querySelectorAll<HTMLButtonElement>(
+      ".how-it-works-btn:not([data-panel-target])",
+    )
     .forEach((btn) => {
       btn.addEventListener("click", () => {
         const wrapperId = btn.getAttribute("aria-controls");

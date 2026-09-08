@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import HowItWorks from "../components/HowItWorks.astro";
 import ProjectCard from "../components/ProjectCard.astro";
+import ProjectDetailPanel from "../components/ProjectDetailPanel.astro";
+import MemoryGuardDemo from "../components/MemoryGuardDemo.astro";
 ---
 
 <Layout
@@ -49,7 +51,7 @@ import ProjectCard from "../components/ProjectCard.astro";
         <div class="projects-container">
           <ProjectCard
             featured
-            title="Prediction-Market Trading Engines"
+            title="Cross Venue Trading Engine"
             year="2026 - Ongoing"
             description="Two market-making engines quoting real capital on <strong>Polymarket US and Kalshi</strong> over persistent WebSocket feeds — <strong>55k contracts / $44k notional</strong> filled to date. Began as a cross-venue arbitrage system; measurement showed <strong>69% of detected edges were stale-feed artifacts</strong>, so the strategy was retired and rebuilt around resting quotes instead of racing to take. Exact-decimal money layer, crash recovery from venue state, 684 tests."
             tags={["Python", "Websockets", "asyncio", "AWS"]}
@@ -160,50 +162,13 @@ import ProjectCard from "../components/ProjectCard.astro";
             ]}
             href="https://github.com/spencerfletcher/MemoryGuard"
             id="mem"
-          >
-            <HowItWorks
-              slot="details"
-              items={[
-                { type: "object", label: "Your C File" },
-                {
-                  type: "stage",
-                  label: "Stage 1 — AST Instrumentation · Clang / LLVM",
-                  desc: "Traverses the AST and injects analysis hooks around malloc, free, dereferences, and aliasing.",
-                },
-                {
-                  type: "object",
-                  label: "instrumented.c",
-                },
-                {
-                  type: "stage",
-                  label: "Stage 2 — Runtime Analysis · C++ shared library",
-                  desc: "Tracks pointer state at runtime, builds a shadow map of allocations, and records errors to JSON.",
-                },
-                {
-                  type: "object",
-                  label: "output_report.json",
-                },
-                {
-                  type: "stage",
-                  label: "Stage 3 — Visual Report · Python / Pygments",
-                  desc: "Annotates the original source with error messages and renders a syntax-highlighted PNG.",
-                },
-                {
-                  type: "object",
-                  label: "test.png",
-                },
-                {
-                  type: "object",
-                  label: "Annotated source — exact error locations",
-                },
-              ]}
-            />
-          </ProjectCard>
+            panel
+          />
 
           <ProjectCard
             title="UBC Medicine — Website Redesign"
             year="2022 - 2023"
-            description="Redesigned UBC’s Cadaver Donation Program webpage, driving a <strong>100%+ increase in donations</strong>. Also overhauled a staff directory serving hundreds of users, improving <strong>search speed by 250%</strong>."
+            description="Redesigned UBC’s Cadaver Donation Program webpage. After launch, <strong>donations more than doubled.</strong>. Also overhauled a staff directory serving hundreds of users, replacing linear search with binary search, which cut lookup to O(log n)."
             tags={["HTML", "CSS", "JavaScript", "WordPress"]}
             links={[
               {
@@ -227,6 +192,48 @@ import ProjectCard from "../components/ProjectCard.astro";
             note="Source unavailable — client project."
             id="tips"
           />
+
+          <ProjectDetailPanel>
+            <div data-project="mem" hidden>
+              <HowItWorks
+                items={[
+                  { type: "object", label: "Your C File" },
+                  {
+                    type: "stage",
+                    label: "Stage 1 — AST Instrumentation · Clang / LLVM",
+                    desc: "Traverses the AST and injects analysis hooks around malloc, free, dereferences, and aliasing.",
+                  },
+                  {
+                    type: "object",
+                    label: "instrumented.c",
+                  },
+                  {
+                    type: "stage",
+                    label: "Stage 2 — Runtime Analysis · C++ shared library",
+                    desc: "Tracks pointer state at runtime, builds a shadow map of allocations, and records errors to JSON.",
+                  },
+                  {
+                    type: "object",
+                    label: "output_report.json",
+                  },
+                  {
+                    type: "stage",
+                    label: "Stage 3 — Visual Report · Python / Pygments",
+                    desc: "Annotates the original source with error messages and renders a syntax-highlighted PNG.",
+                  },
+                  {
+                    type: "object",
+                    label: "test.png",
+                  },
+                  {
+                    type: "object",
+                    label: "Annotated source — exact error locations",
+                  },
+                ]}
+              />
+              <MemoryGuardDemo />
+            </div>
+          </ProjectDetailPanel>
         </div>
       </section>
 

@@ -1,0 +1,169 @@
+---
+/* One shared full-width detail row for the projects grid. Children are
+   pre-rendered blocks tagged `data-project="<card id>"`; the script shows the
+   block matching the toggled card and moves this row after that card's grid
+   row. Cards opt in with the `panel` prop on ProjectCard. */
+---
+
+<div id="project-detail-panel" class="detail-row" hidden>
+  <div class="detail-row-inner">
+    <slot />
+  </div>
+</div>
+
+<style is:global>
+  .detail-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-rows: 1fr;
+    position: relative;
+    /* Notch sits under the active card; the script sets --notch-x. */
+    --notch-x: 50%;
+    transition:
+      grid-template-rows 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+      display 0.2s allow-discrete;
+  }
+
+  .detail-row[hidden] {
+    display: none;
+    grid-template-rows: 0fr;
+  }
+
+  @starting-style {
+    .detail-row {
+      grid-template-rows: 0fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .detail-row {
+      transition: none;
+    }
+  }
+
+  .detail-row-inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .detail-row [data-project] {
+    position: relative;
+    /* Space for the notch above the panel border. */
+    margin-top: var(--space-2);
+    padding: var(--space-4);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  .detail-row [data-project][hidden] {
+    display: none;
+  }
+
+  .detail-row [data-project]::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: var(--notch-x);
+    width: 10px;
+    height: 10px;
+    transform: translateX(-50%) rotate(45deg);
+    background: var(--bg-card);
+    border-top: 1px solid var(--accent-border-strong);
+    border-left: 1px solid var(--accent-border-strong);
+  }
+
+  /* Tighter pipeline than the featured card's in-card version. */
+  .detail-row .pipeline-body {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .detail-row .pipeline-stage {
+    padding: 0.3rem 0.5rem;
+  }
+
+  .detail-row .pipeline-connector {
+    padding: 0.05rem 0;
+  }
+
+  .detail-row .pipeline-connector-line {
+    height: 4px;
+  }
+
+  @media (max-width: 640px) {
+    .detail-row [data-project] {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const panel = document.getElementById("project-detail-panel")!;
+  const buttons = document.querySelectorAll<HTMLButtonElement>(
+    "[data-panel-target]",
+  );
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let active: HTMLButtonElement | null = null;
+
+  function place(card: HTMLElement) {
+    // Last article sharing the card's top edge ends its grid row.
+    let rowEnd = card;
+    let next = card.nextElementSibling as HTMLElement | null;
+    while (next && next.tagName === "ARTICLE" && next.offsetTop === card.offsetTop) {
+      rowEnd = next;
+      next = next.nextElementSibling as HTMLElement | null;
+    }
+    rowEnd.after(panel);
+    const notch = card.offsetLeft + card.offsetWidth / 2 - panel.offsetLeft;
+    panel.style.setProperty("--notch-x", `${notch}px`);
+  }
+
+  function close() {
+    if (!active) return;
+    active.setAttribute("aria-expanded", "false");
+    active.classList.remove("open");
+    active.querySelector(".btn-label")!.textContent = "How it works";
+    active = null;
+    panel.hidden = true;
+  }
+
+  function open(btn: HTMLButtonElement) {
+    const id = btn.dataset.panelTarget!;
+    const card = document.getElementById(id)!;
+    close();
+    panel.querySelectorAll<HTMLElement>("[data-project]").forEach((el) => {
+      el.hidden = el.dataset.project !== id;
+    });
+    place(card);
+    active = btn;
+    btn.setAttribute("aria-expanded", "true");
+    btn.classList.add("open");
+    btn.querySelector(".btn-label")!.textContent = "Hide details";
+    panel.hidden = false;
+    if (panel.getBoundingClientRect().bottom > innerHeight) {
+      panel.scrollIntoView({
+        block: "nearest",
+        behavior: reduced ? "auto" : "smooth",
+      });
+    }
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => (btn === active ? close() : open(btn)));
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || !active) return;
+    const btn = active;
+    close();
+    btn.focus();
+  });
+
+  addEventListener("resize", () => {
+    if (active) place(document.getElementById(active.dataset.panelTarget!)!);
+  });
+</script>

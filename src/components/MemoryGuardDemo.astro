@@ -1,0 +1,130 @@
+---
+/* MemoryGuard's annotated output, restyled as HTML. The C source is
+   highlighted by Astro's built-in Shiki; MemoryGuard's block comments become
+   annotation chips, everything else is left to the theme. */
+import { Code } from "astro:components";
+import type { ComponentProps } from "astro/types";
+
+// shiki isn't a direct dependency, so borrow the type from <Code>'s props.
+type ShikiTransformer = NonNullable<
+  ComponentProps<typeof Code>["transformers"]
+>[number];
+
+const repo = "https://github.com/spencerfletcher/MemoryGuard";
+
+const source = `#include <stdio.h>
+#include <stdlib.h>
+
+// Simple dangling pointer with aliasing
+int main() {
+    int *p = malloc(sizeof(int));
+    int *a = p; /* Variable aliased. */
+    *p = 10;
+    free(p); /* Attempting to access freed memory! */
+    p = malloc(sizeof(int)); /* WARNING: MEMORY LEAK */ /* Allocated but never freed! */
+    printf("%i", *a); /* ERROR: DANGLING POINTER */
+    return 0;
+}`;
+
+/* Decorations work on source offsets, so a chip can sit inside a `//`
+   comment where Shiki would otherwise see one long comment token. */
+const annotations: ShikiTransformer = {
+  preprocess(code, options) {
+    options.decorations = [...code.matchAll(/\/\*.*?\*\//g)].map((m) => ({
+      start: m.index,
+      end: m.index + m[0].length,
+      properties: {
+        class: m[0].includes("ERROR") ? "chip err" : "chip warn",
+      },
+    }));
+  },
+};
+---
+
+<div class="code-demo">
+  <div class="detail-panel">
+    <div class="detail-panel-header">
+      <span class="detail-panel-label">Output</span>
+      <span class="detail-panel-caption">Aliasing + leak · test.png</span>
+    </div>
+    <Code
+      code={source}
+      lang="c"
+      theme="material-theme-palenight"
+      transformers={[annotations]}
+    />
+  </div>
+  <p class="code-demo-caption">
+    Restyled output —{" "}
+    <a href={repo} target="_blank" rel="noopener noreferrer">
+      run it yourself →
+    </a>
+  </p>
+</div>
+
+<style is:global>
+  .code-demo pre {
+    margin: 0;
+    padding: var(--space-3) var(--space-3) var(--space-3) 0;
+    /* Panel owns the background; the theme's would clash. */
+    background: transparent !important;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: 2;
+    counter-reset: line;
+  }
+
+  /* Shiki separates .line spans with newlines; don't render them. */
+  .code-demo pre code {
+    display: block;
+    white-space: normal;
+  }
+
+  /* Gutter sits in the padding, so wrapped text stays under the code. */
+  .code-demo .line {
+    position: relative;
+    display: block;
+    padding-left: 3rem;
+    /* Blank lines have no content; keep them one line tall. */
+    min-height: 2em;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .code-demo .line::before {
+    counter-increment: line;
+    content: counter(line);
+    position: absolute;
+    left: 0;
+    width: 3rem;
+    padding-right: var(--space-3);
+    box-sizing: border-box;
+    text-align: right;
+    color: var(--text-tertiary);
+    user-select: none;
+  }
+
+  .code-demo .chip {
+    padding: 0.1rem 0.35rem;
+    border-radius: var(--radius-sm);
+    font-style: normal;
+    /* Chip background follows the text across a wrap. */
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  .code-demo .chip.warn {
+    background: rgba(214, 160, 90, 0.2);
+    color: #f0e0c0 !important;
+  }
+  .code-demo .chip.err {
+    background: rgba(230, 90, 90, 0.2);
+    color: #f5a0a0 !important;
+  }
+
+  .code-demo-caption {
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--text-tertiary);
+  }
+</style>
