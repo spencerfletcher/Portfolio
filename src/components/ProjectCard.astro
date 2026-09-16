@@ -59,33 +59,38 @@ const hasDetails = Boolean(panel && id && Astro.slots.has("details"));
     <div class="tag-list">
       {tags.map((tag) => <span class="tag">{tag}</span>)}
     </div>
-    {
-      hasDetails && (
-        <button
-          class="how-it-works-btn"
-          aria-expanded="false"
-          aria-controls={`project-detail-${id}`}
-          data-panel-target={id}
-        >
-          <span class="btn-label">How it works</span>
-          <span class="chevron" aria-hidden="true">
-            ▾
-          </span>
-        </button>
-      )
-    }
   </div>
+
   {
-    links && links.length > 0 && (
-      <div class="links">
-        {links.map((link) => (
-          <a target="_blank" rel="noopener noreferrer" href={link.href}>
-            {link.label}
-          </a>
-        ))}
+    ((links && links.length > 0) || hasDetails) && (
+      <div class="card-actions">
+        {links && links.length > 0 && (
+          <div class="links">
+            {links.map((link) => (
+              <a target="_blank" rel="noopener noreferrer" href={link.href}>
+                {link.label}
+              </a>
+            ))}
+          </div>
+        )}
+
+        {hasDetails && (
+          <button
+            class="how-it-works-btn"
+            aria-expanded="false"
+            aria-controls={`project-detail-${id}`}
+            data-panel-target={id}
+          >
+            <span class="btn-label">How it works</span>
+            <span class="chevron" aria-hidden="true">
+              ▾
+            </span>
+          </button>
+        )}
       </div>
     )
   }
+
   {note && <p class="note">{note}</p>}
 </article>
 
@@ -203,15 +208,7 @@ const hasDetails = Boolean(panel && id && Astro.slots.has("details"));
   }
 
   .tags {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: var(--space-1);
     margin: var(--space-4) 0;
-    /* Reserve the toggle button's height so cards without one keep the
-		   same row height and the links row lines up across the grid. */
-    min-height: 2rem;
   }
 
   .tag-list {
@@ -229,6 +226,16 @@ const hasDetails = Boolean(panel && id && Astro.slots.has("details"));
     font-size: var(--text-xs);
     font-weight: 400;
     letter-spacing: 0.02em;
+  }
+
+  .card-actions {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: auto;
   }
 
   /* Toggle button */
@@ -442,8 +449,6 @@ const hasDetails = Boolean(panel && id && Astro.slots.has("details"));
   }
 
   .links {
-    position: relative;
-    z-index: 2;
     display: flex;
     flex-wrap: wrap;
     gap: 1.25rem;
@@ -464,6 +469,16 @@ const hasDetails = Boolean(panel && id && Astro.slots.has("details"));
   @media (max-width: 640px) {
     .projects-container article.featured {
       grid-column: 1;
+    }
+
+    .card-actions {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-3);
+    }
+
+    .how-it-works-btn {
+      align-self: flex-start;
     }
   }
 </style>

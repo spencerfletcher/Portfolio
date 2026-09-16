@@ -122,7 +122,7 @@ import ForkDemo from "../components/ForkDemo.astro";
           <ProjectCard
             title="Fork: A Recipe Versioning Platform"
             year="2025 - Ongoing"
-            description="I built Fork because I wanted a better way to develop my own recipes without losing track of what changed or which version worked. It’s a full-stack SvelteKit/PostgreSQL recipe workspace with <strong>ingredient and instruction history, structured diffs, public/private recipes, and attributed variations</strong>. I used the project to learn SvelteKit while building around a problem I genuinely care about as a cook."
+            description="I built Fork because I wanted a better way to develop my own recipes without losing track of what changed or which version worked. It’s a full-stack SvelteKit/PostgreSQL recipe workspace with <strong>ingredient and instruction history, structured diffs, public/private recipes, and attributed variations</strong>. I used the project to learn SvelteKit while building around a problem I genuinely care about."
             tags={["SvelteKit", "SQL", "TypeScript"]}
             links={[
               {
@@ -484,8 +484,35 @@ import ForkDemo from "../components/ForkDemo.astro";
       grid-template-columns: 1fr;
     }
 
+    .header-content {
+      padding-inline: var(--space-2);
+    }
+
+    .header-content > .subtitle {
+      line-height: 1.55;
+    }
+    .projects-container article p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
     .header-cta {
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr 1fr;
+      gap: var(--space-2);
+    }
+
+    .header-cta a {
+      width: 100%;
+      min-width: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+
+      padding-inline: 0.5rem;
+      white-space: nowrap;
     }
   }
 
