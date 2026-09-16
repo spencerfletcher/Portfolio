@@ -18,12 +18,12 @@ import ForkDemo from "../components/ForkDemo.astro";
           <p class="eyebrow">Open to work · UBC CS · US citizen</p>
           <h1>Spencer Fletcher</h1>
           <p class="subtitle">
-            I’m a UBC CS grad who enjoys building tools that solve hard problems
-            — from <a href="#poly">market-making engines quoting real capital</a
-            >, to a <a href="#mem">Clang/LLVM memory-safety checker</a>, to a <a
-              href="#fork">recipe platform with git-style version control</a
-            >. I care about systems that are correct under pressure, not just
-            one-time demos.
+            I’m a UBC CS grad who builds high-quality tools for problems I care
+            about, from a <a href="#poly">live market-making engine</a>, to a
+            <a href="#mem"> Clang/LLVM memory-analysis tool</a>, to
+            <a href="#fork"> Fork</a>, a recipe workspace I built for developing
+            my own recipes. I like taking software from an idea through testing,
+            deployment, and real use.
           </p>
         </div>
 
@@ -52,9 +52,9 @@ import ForkDemo from "../components/ForkDemo.astro";
         <div class="projects-container">
           <ProjectCard
             featured
-            title="Cross-Venue Trading Engine"
+            title="Automated Market-Making Engine"
             year="2026 - Ongoing"
-            description="Two market-making engines quoting real capital on Polymarket US & Kalshi over persistent WebSocket feeds — <strong>155k contracts / $77k notional</strong> filled to date. Began as a cross-venue arbitrage system; measurement showed <strong>69% of detected edges were stale-feed artifacts</strong>, so the strategy was retired and rebuilt around resting quotes instead of racing to take. Exact-decimal money layer, crash recovery from venue state, 12k tests."
+            description="A Python market-making engine running live capital on Polymarket US, with 154k+ contracts and $77k+ in gross notional filled over seven weeks. Built on AWS with persistent WebSocket market data, exact-decimal accounting, crash recovery and reconciliation, and a 12k+ automated test suite. The system evolved from an earlier cross-venue arbitrage experiment after I measured the practical limits of competing on taker latency."
             tags={["Python", "Websockets", "asyncio", "AWS"]}
             links={[
               {
@@ -70,12 +70,59 @@ import ForkDemo from "../components/ForkDemo.astro";
             note="Market selection, tuned parameters, and results are withheld."
             id="poly"
             panel
-          />
+            detailLayout="stack"
+          >
+            <Fragment slot="details">
+              <HowItWorks
+                items={[
+                  {
+                    type: "object",
+                    label: "Live Market Universe",
+                  },
+                  {
+                    type: "stage",
+                    label:
+                      "Stage 1 — Discover & Observe · asyncio / REST / WebSockets",
+                    desc: "Discovers eligible markets over REST, filters out poor quoting candidates, then maintains fresh order books through concurrent WebSocket feeds and on-demand reads.",
+                  },
+                  {
+                    type: "object",
+                    label: "Fresh Order Books",
+                  },
+                  {
+                    type: "stage",
+                    label: "Stage 2 — Quote & Book · Python / Decimal",
+                    desc: "Computes maker prices and sizes, maintains resting orders, and consumes private fill events. Executions are booked idempotently with exact-decimal accounting.",
+                  },
+                  {
+                    type: "object",
+                    label: "Orders + Fill Ledger",
+                  },
+                  {
+                    type: "stage",
+                    label:
+                      "Stage 3 — Persist & Reconcile · AWS / Crash Recovery",
+                    desc: "Persists the state needed for recovery and reconciles local records against the exchange after restarts or ambiguous failures. Unverified state remains unsafe instead of being treated as flat.",
+                  },
+                  {
+                    type: "object",
+                    label: "Reconciled Trading State",
+                  },
+                ]}
+              />
+              <span class="notes">
+                <strong>Development process:</strong> I built this partly as an experiment
+                in AI-assisted development. Claude Code accelerated implementation
+                and testing, while exchange behavior, accounting assumptions, and
+                failure paths were validated against real or recorded venue behavior.
+              </span>
+            </Fragment>
+          </ProjectCard>
 
           <ProjectCard
-            title="Fork: A Git-Style Recipe Platform"
+            title="Fork: A Recipe Versioning Platform"
             year="2025 - Ongoing"
-            description="A full-stack recipe platform with <strong>Git-style version control</strong> for tracking recipe changes and forking other recipes. Built using SvelteKit and PostgreSQL, with user auth, image storage, and a public feed."
+            description="I built Fork because I wanted a better way to develop my own recipes without losing track of what changed or which version worked. It’s a full-stack SvelteKit/PostgreSQL recipe workspace with <strong>ingredient and instruction history, structured diffs, public/private recipes, and attributed variations</strong>. I used the project to learn SvelteKit while building around a problem I genuinely care about as a cook."
             tags={["SvelteKit", "SQL", "TypeScript"]}
             links={[
               {
@@ -90,12 +137,57 @@ import ForkDemo from "../components/ForkDemo.astro";
             href="https://github.com/spencerfletcher/Fork"
             id="fork"
             panel
-          />
+            detailLayout="stack"
+          >
+            <Fragment slot="details">
+              <ForkDemo />
+              <HowItWorks
+                items={[
+                  {
+                    type: "object",
+                    label: "Your Recipe",
+                  },
+                  {
+                    type: "stage",
+                    label: "Stage 1 — Write & Version · SvelteKit / PostgreSQL",
+                    desc: "Stores recipe metadata separately from versioned ingredients and instructions, preserving each saved formulation as a revision with its own commit message.",
+                  },
+                  {
+                    type: "object",
+                    label: "Recipe History",
+                  },
+                  {
+                    type: "stage",
+                    label: "Stage 2 — Compare · TypeScript / Structured Diff",
+                    desc: "Compares revisions ingredient-by-ingredient and step-by-step, generating word-level diffs so changes to amounts, ingredients, and instructions stay readable.",
+                  },
+                  {
+                    type: "object",
+                    label: "Version Diff",
+                  },
+                  {
+                    type: "stage",
+                    label: "Stage 3 — Adapt & Attribute · SvelteKit / Supabase",
+                    desc: "Creates an independent variation from the latest revision in a single transaction, preserving its source relationship and attribution while leaving the original untouched.",
+                  },
+                  {
+                    type: "object",
+                    label: "Attributed Variation",
+                  },
+                ]}
+              />
+              <span class="notes">
+                <strong>Production hardening:</strong> Added Drizzle migrations, Supabase
+                row-level security, and CI checks after finding inconsistencies between
+                local and production database schemas.
+              </span>
+            </Fragment>
+          </ProjectCard>
 
           <ProjectCard
             title="MemoryGuard"
             year="2024"
-            description="A Clang/LLVM memory safety tool for C. Static instrumentation plus dynamic runtime analysis to detect memory leaks and dangling pointers, with annotated, syntax-highlighted error reports."
+            description="A Clang/LLVM dynamic-analysis tool for C, co-developed in a four-person course team with guidance from our TA. It combines AST instrumentation with runtime heap tracking to detect memory leaks and use-after-free and reports findings against the original source. My work included runtime use-after-free detection for aliased heap pointers and peer review across the project."
             tags={["C++", "CMake", "Python"]}
             links={[
               {
@@ -106,101 +198,9 @@ import ForkDemo from "../components/ForkDemo.astro";
             href="https://github.com/spencerfletcher/MemoryGuard"
             id="mem"
             panel
-          />
-
-          <ProjectCard
-            title="UBC Medicine — Website Redesign"
-            year="2022 - 2023"
-            description="Rebuilt UBC's Cadaver Donation Program webpage from another team's design and shipped it solo. After launch, <strong>donations more than doubled</strong>. Also overhauled a staff directory serving hundreds of users, replacing linear search with binary search over an alphabetized index."
-            tags={["HTML", "CSS", "JavaScript", "WordPress"]}
-            links={[
-              {
-                label: "View Code →",
-                href: "https://github.com/spencerfletcher/body-donation-site",
-              },
-              {
-                label: "Live Project →",
-                href: "https://cps.med.ubc.ca/body-donation/",
-              },
-            ]}
-            href="https://cps.med.ubc.ca/body-donation/"
-            id="ubc"
-          />
-
-          <ProjectCard
-            title="Hollywood Theatre Automation"
-            year="2024 - 2025 · Freelance"
-            description="Built tooling for the Hollywood Theatre in Vancouver — a web-based marquee letter tracker and a tip-splitting system, saving <strong>5+ hours of manual work weekly</strong>."
-            tags={["JavaScript", "Google Apps Script"]}
-            note="Source unavailable — client project."
-            id="tips"
-          />
-
-          <ProjectDetailPanel>
-            <div data-project="poly" hidden>
-              <HowItWorks
-                items={[
-                  {
-                    type: "object",
-                    label: "Venue market universe — Polymarket US + Kalshi",
-                  },
-                  {
-                    type: "stage",
-                    label: "Stage 1 — Discovery Crawl · asyncio / REST",
-                    desc: "Walks every listed market on both venues and normalizes two different venue schemas into one internal market shape.",
-                  },
-                  {
-                    type: "object",
-                    label: "market universe",
-                  },
-                  {
-                    type: "stage",
-                    label: "Stage 2 — Two-Stage Screen · Python",
-                    desc: "Filter out books that are structurally invalid: No recent trades, too much competition, books without rebate potential. Almost everything dies here. Only survivors get a paid depth read.",
-                  },
-                  {
-                    type: "object",
-                    label: "screen_<timestamp>.csv",
-                  },
-                  {
-                    type: "stage",
-                    label: "Stage 3 — Quote Cycle · asyncio / WebSockets",
-                    desc: "Per market, per interval: check the kill switch before any venue call, read the book (WebSocket if fresh enough, cache-busted REST otherwise), then join the touch or improve by exactly one tick. Cancel-and-replace only where our own price moved — an unchanged quote keeps its queue position.",
-                  },
-                  {
-                    type: "object",
-                    label: "resting orders on the venue",
-                  },
-                  {
-                    type: "stage",
-                    label: "Stage 4 — Fill Booking · Private order WebSocket",
-                    desc: "Fills arrive on a bounded queue that drops oldest under pressure, safe because booking is cumulative-quantity based. Every fill is booked idempotently and its commission read back from the venue rather than modelled.",
-                  },
-                  {
-                    type: "object",
-                    label: "poly_live_mm_fills.csv",
-                  },
-                  {
-                    type: "stage",
-                    label: "Stage 5 — Durable State · fsync / atomic replace",
-                    desc: "Order intent is persisted before the order is transmitted, so the “sent, then died before the response” window is recoverable. On restart, belief is rebuilt from venue truth rather than from local memory.",
-                  },
-                  {
-                    type: "object",
-                    label: "maker_state_poly.json",
-                  },
-                  {
-                    type: "object",
-                    label:
-                      "Quotes resting on books that can actually pay — with position, exposure and crash state provable at any instant",
-                  },
-                ]}
-              />
-            </div>
-            <div data-project="fork" hidden>
-              <ForkDemo />
-            </div>
-            <div data-project="mem" hidden>
+            detailLayout="split"
+          >
+            <Fragment slot="details">
               <HowItWorks
                 items={[
                   { type: "object", label: "Your C File" },
@@ -238,9 +238,38 @@ import ForkDemo from "../components/ForkDemo.astro";
                 ]}
               />
               <MemoryGuardDemo />
-            </div>
-          </ProjectDetailPanel>
+            </Fragment>
+          </ProjectCard>
+
+          <ProjectCard
+            title="UBC Medicine — Website Redesign"
+            year="2022 - 2023"
+            description="Implemented another team’s redesign of UBC Medicine’s Body Donation Program website in WordPress/JavaScript; <strong>body donations more than doubled after launch</strong>. Also overhauled a staff directory serving hundreds of users, replacing linear search with binary search over an alphabetized index."
+            tags={["HTML", "CSS", "JavaScript", "WordPress"]}
+            links={[
+              {
+                label: "View Code →",
+                href: "https://github.com/spencerfletcher/body-donation-site",
+              },
+              {
+                label: "Live Project →",
+                href: "https://cps.med.ubc.ca/body-donation/",
+              },
+            ]}
+            href="https://cps.med.ubc.ca/body-donation/"
+            id="ubc"
+          />
+
+          <ProjectCard
+            title="Hollywood Theatre Automation"
+            year="2024 - 2025 · Freelance"
+            description="Built a Google Apps Script tip-splitting workflow <strong>(~5 hours/week saved)</strong> and a JavaScript marquee letter tracker <strong>(~2 hours/week saved)</strong> for the Hollywood Theatre in Vancouver."
+            tags={["JavaScript", "Google Apps Script"]}
+            note="Source unavailable — client project."
+            id="tips"
+          />
         </div>
+        <ProjectDetailPanel />
       </section>
 
       <section class="tools">
@@ -248,20 +277,17 @@ import ForkDemo from "../components/ForkDemo.astro";
         <div class="skills-inline">
           <div class="skill-group">
             <h3>Programming</h3>
+            <p>Python · C++ · C · TypeScript · JavaScript · Java · Assembly</p>
+          </div>
+          <div class="skill-group">
+            <h3>Web & Data</h3>
             <p>
-              Python · TypeScript · JavaScript · Java · C/C++ · Assembly ·
-              Erlang · R
+              SvelteKit · React · Node.js · PostgreSQL · Supabase · REST APIs
             </p>
           </div>
           <div class="skill-group">
-            <h3>Web & Frameworks</h3>
-            <p>
-              SvelteKit · Next.js · Django · Node.js · React Native · Tailwind
-            </p>
-          </div>
-          <div class="skill-group">
-            <h3>Infrastructure</h3>
-            <p>Git · Docker · PostgreSQL · AWS · CI/CD · Clang/LLVM · Linux</p>
+            <h3>Systems & Tools</h3>
+            <p>Claude Code · Linux · AWS · Git · Docker · CI/CD · WebSockets</p>
           </div>
         </div>
       </section>
@@ -519,6 +545,17 @@ import ForkDemo from "../components/ForkDemo.astro";
     100% {
       box-shadow: 0 0 0 0 rgba(124, 111, 240, 0);
     }
+  }
+
+  .notes {
+    color: var(--text-tertiary);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+
+  .notes strong {
+    color: var(--text-secondary);
+    font-weight: 600;
   }
 </style>
 

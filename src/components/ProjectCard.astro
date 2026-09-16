@@ -9,8 +9,8 @@ interface Props {
   featured?: boolean;
   note?: string;
   id?: string;
-  /* Content lives in the shared ProjectDetailPanel row, keyed by `id`. */
   panel?: boolean;
+  detailLayout?: "stack" | "split";
 }
 
 const {
@@ -24,7 +24,10 @@ const {
   note,
   id,
   panel,
+  detailLayout = "stack",
 } = Astro.props;
+
+const hasDetails = Boolean(panel && id && Astro.slots.has("details"));
 ---
 
 <article class:list={[{ featured }]} id={id}>
@@ -57,11 +60,11 @@ const {
       {tags.map((tag) => <span class="tag">{tag}</span>)}
     </div>
     {
-      panel && (
+      hasDetails && (
         <button
           class="how-it-works-btn"
           aria-expanded="false"
-          aria-controls="project-detail-panel"
+          aria-controls={`project-detail-${id}`}
           data-panel-target={id}
         >
           <span class="btn-label">How it works</span>
@@ -85,6 +88,23 @@ const {
   }
   {note && <p class="note">{note}</p>}
 </article>
+
+{
+  hasDetails && (
+    <div
+      id={`project-detail-${id}`}
+      class="detail-row"
+      data-detail-for={id}
+      hidden
+    >
+      <div class="detail-row-inner">
+        <div class:list={["detail-content", `detail-content--${detailLayout}`]}>
+          <slot name="details" />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 <style is:global>
   .projects-container article {
@@ -253,6 +273,86 @@ const {
     transform: rotate(-180deg);
   }
 
+  .detail-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-rows: 1fr;
+    position: relative;
+    --notch-x: 50%;
+
+    margin-top: calc(-1 * var(--space-3));
+
+    transition:
+      grid-template-rows 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.2s ease,
+      display 0.25s allow-discrete;
+
+    opacity: 1;
+  }
+
+  .detail-row[hidden] {
+    display: none;
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+
+  .detail-row-inner {
+    min-height: 0;
+    overflow: hidden;
+    padding-top: var(--space-2);
+  }
+
+  @starting-style {
+    .detail-row:not([hidden]) {
+      grid-template-rows: 0fr;
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .detail-row {
+      transition: none;
+    }
+  }
+
+  .detail-content {
+    position: relative;
+    padding: var(--space-4);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    display: grid;
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  .detail-content--stack {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-content--split {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  }
+
+  .detail-content::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: var(--notch-x);
+    width: 10px;
+    height: 10px;
+    transform: translateX(-50%) rotate(45deg);
+    background: var(--bg-card);
+    border-top: 1px solid var(--accent-border-strong);
+    border-left: 1px solid var(--accent-border-strong);
+  }
+
+  @media (max-width: 800px) {
+    .detail-content--split {
+      grid-template-columns: 1fr;
+    }
+  }
+
   /* ── Reusable panel layout ───────────────────────────────────── */
 
   .detail-panel {
@@ -367,4 +467,3 @@ const {
     }
   }
 </style>
-
