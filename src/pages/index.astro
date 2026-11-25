@@ -35,14 +35,18 @@ import ForkDemo from "../components/ForkDemo.astro";
             target="_blank"
             rel="noopener noreferrer"
             href="/Spencer_Fletcher.pdf"
-            class="cta-button cta-button-secondary">Resume →</a
+            class="cta-button cta-button-secondary"
           >
+            Resume →
+          </a>
           <a
             target="_blank"
             rel="noopener noreferrer"
             href="https://linkedin.com/in/spencer-fletcher-dev"
-            class="cta-button cta-button-secondary">LinkedIn →</a
+            class="cta-button cta-button-secondary"
           >
+            LinkedIn →
+          </a>
         </div>
       </header>
 
@@ -54,7 +58,7 @@ import ForkDemo from "../components/ForkDemo.astro";
             featured
             title="Automated Market-Making Engine"
             year="2026 - Ongoing"
-            description="A Python market-making engine running live capital on Polymarket US, with <strong>154k+ contracts</strong> and <strong>$77k+ in gross notional</strong> filled over seven weeks. Built on AWS with persistent WebSocket market data, exact-decimal accounting, crash recovery and reconciliation, and <strong>an automated test suite of more than 12,000 tests</strong>. The system evolved from an earlier cross-venue arbitrage experiment after I measured the practical limits of competing on taker latency."
+            description="A Python market-making engine deployed on Polymarket US, with <strong>157k+ contracts and $79k+ in gross notional</strong> filled over seven weeks. Built with concurrent WebSocket market data, exact-decimal accounting, crash recovery and exchange reconciliation, backed by <strong>14k+ automated tests</strong>. The system has since been extended with a common exchange adapter interface for Polymarket US and Kalshi."
             tags={["Python", "Websockets", "asyncio", "AWS"]}
             links={[
               {
@@ -111,18 +115,19 @@ import ForkDemo from "../components/ForkDemo.astro";
                 ]}
               />
               <span class="notes">
-                <strong>Development process:</strong> I built this partly as an experiment
-                in AI-assisted development. Claude Code accelerated implementation
-                and testing, while exchange behavior, accounting assumptions, and
-                failure paths were validated against real or recorded venue behavior.
+                <strong>Development process:</strong> I built this partly as an
+                experiment in AI-assisted development. Claude Code accelerated
+                implementation and testing, while exchange behavior, accounting
+                assumptions, and failure paths were validated against real or
+                recorded venue behavior.
               </span>
             </Fragment>
           </ProjectCard>
 
           <ProjectCard
-            title="Fork: A Recipe Versioning Platform"
+            title="Fork: Recipe Development Platform"
             year="2025 - Ongoing"
-            description="I built Fork because I wanted a better way to develop my own recipes without losing track of what changed or which version worked. It’s a full-stack SvelteKit/PostgreSQL recipe workspace with <strong>ingredient and instruction history, structured diffs, public/private recipes, and attributed variations</strong>. I used the project to learn SvelteKit while building around a problem I genuinely care about."
+            description="I built Fork because I wanted a better way to develop my own recipes without losing track of what changed or which version worked. It’s a full-stack SvelteKit/PostgreSQL platform combining <strong>recipe version control, algorithmic comparisons, interactive cooking tools, and version-linked cooking journals</strong> with a social cookbook for sharing and discovering recipes."
             tags={["SvelteKit", "SQL", "TypeScript"]}
             links={[
               {
@@ -150,7 +155,7 @@ import ForkDemo from "../components/ForkDemo.astro";
                   {
                     type: "stage",
                     label: "Stage 1 — Write & Version · SvelteKit / PostgreSQL",
-                    desc: "Stores recipe metadata separately from versioned ingredients and instructions, preserving each saved formulation as a revision with its own commit message.",
+                    desc: "Parses plain-text ingredients and instructions into structured data. Transactional saves preserve version history using PostgreSQL row locks and stale-edit detection.",
                   },
                   {
                     type: "object",
@@ -158,28 +163,29 @@ import ForkDemo from "../components/ForkDemo.astro";
                   },
                   {
                     type: "stage",
-                    label: "Stage 2 — Compare · TypeScript / Structured Diff",
-                    desc: "Compares revisions ingredient-by-ingredient and step-by-step, generating word-level diffs so changes to amounts, ingredients, and instructions stay readable.",
+                    label:
+                      "Stage 2 — Compare & Understand · TypeScript / Dynamic Programming",
+                    desc: "Uses sequence matching and text similarity to identify edited, reordered, split, and merged instructions, generating word-level diffs and readable change summaries.",
                   },
                   {
                     type: "object",
-                    label: "Version Diff",
+                    label: "Recipe Changes",
                   },
                   {
                     type: "stage",
-                    label: "Stage 3 — Adapt & Attribute · SvelteKit / Supabase",
-                    desc: "Creates an independent variation from the latest revision in a single transaction, preserving its source relationship and attribution while leaving the original untouched.",
+                    label: "Stage 3 — Cook & Refine · Recipe Parsing / Journal",
+                    desc: "Scales quantities across ingredients and instructions, supports interactive cooking, and records the recipe version, scale, outcome, and notes for each cook.",
                   },
                   {
                     type: "object",
-                    label: "Attributed Variation",
+                    label: "Informed Next Revision",
                   },
                 ]}
               />
               <span class="notes">
-                <strong>Production hardening:</strong> Added Drizzle migrations, Supabase
-                row-level security, and CI checks after finding inconsistencies between
-                local and production database schemas.
+                <strong>Production hardening:</strong> Added Drizzle migrations,
+                Supabase row-level security, and CI checks after finding
+                inconsistencies between local and production database schemas.
               </span>
             </Fragment>
           </ProjectCard>
@@ -320,7 +326,7 @@ import ForkDemo from "../components/ForkDemo.astro";
 <style is:global>
   .page {
     /* content-box so the 860px is the measure itself — the responsive
-		   padding below sits outside it rather than eating into it. */
+  		   padding below sits outside it rather than eating into it. */
     box-sizing: content-box;
     max-width: 860px;
     margin: 0 auto;
