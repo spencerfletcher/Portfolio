@@ -31,90 +31,83 @@ const hasDetails = Boolean(panel && id && Astro.slots.has("details"));
 ---
 
 <article class:list={[{ featured }]} id={id}>
-  {featured && <div class="featured-label">Featured</div>}
-  {
-    /* The title anchor stretches over the whole card via ::after, so the card
+  {/* The title anchor stretches over the whole card via ::after, so the card
 	    is clickable without giving up real link behaviour (cmd-click, middle
-	    click, copy link, screen-reader announcement). */
-  }
+	    click, copy link, screen-reader announcement). */}
   <h3>
-    {
-      href ? (
-        <a
-          class="card-link"
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {title}
-        </a>
-      ) : (
-        title
-      )
-    }
+    {href ? (
+      <a
+        class="card-link"
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {title}
+      </a>
+    ) : (
+      title
+    )}
   </h3>
   <span class="year">{year}</span>
   <p set:html={description} />
   <div class="tags">
     <div class="tag-list">
-      {tags.map((tag) => <span class="tag">{tag}</span>)}
+      {tags.map((tag) => (
+        <span class="tag">{tag}</span>
+      ))}
     </div>
   </div>
 
-  {
-    ((links && links.length > 0) || hasDetails) && (
-      <div class="card-actions">
-        {links && links.length > 0 && (
-          <div class="links">
-            {links.map((link) => (
-              <a target="_blank" rel="noopener noreferrer" href={link.href}>
-                {link.label}
-              </a>
-            ))}
-          </div>
-        )}
+  {((links && links.length > 0) || hasDetails) && (
+    <div class="card-actions">
+      {links && links.length > 0 && (
+        <div class="links">
+          {links.map((link) => (
+            <a target="_blank" rel="noopener noreferrer" href={link.href}>
+              {link.label}
+            </a>
+          ))}
+        </div>
+      )}
 
-        {hasDetails && (
-          <button
-            class="how-it-works-btn"
-            aria-expanded="false"
-            aria-controls={`project-detail-${id}`}
-            data-panel-target={id}
-          >
-            <span class="btn-label">How it works</span>
-            <span class="chevron" aria-hidden="true">
-              ▾
-            </span>
-          </button>
-        )}
-      </div>
-    )
-  }
+      {hasDetails && (
+        <button
+          class="how-it-works-btn"
+          aria-expanded="false"
+          aria-controls={`project-detail-${id}`}
+          data-panel-target={id}
+        >
+          <span class="btn-label">How it works</span>
+          <span class="chevron" aria-hidden="true">
+            ▾
+          </span>
+        </button>
+      )}
+    </div>
+  )}
 
   {note && <p class="note">{note}</p>}
 </article>
 
-{
-  hasDetails && (
-    <div
-      id={`project-detail-${id}`}
-      class="detail-row"
-      data-detail-for={id}
-      hidden
-    >
-      <div class="detail-row-inner">
-        <div class:list={["detail-content", `detail-content--${detailLayout}`]}>
-          <slot name="details" />
-        </div>
+{hasDetails && (
+  <div
+    id={`project-detail-${id}`}
+    class="detail-row"
+    data-detail-for={id}
+    hidden
+  >
+    <div class="detail-row-inner">
+      <div class:list={["detail-content", `detail-content--${detailLayout}`]}>
+        <slot name="details" />
       </div>
     </div>
-  )
-}
+  </div>
+)}
 
 <style is:global>
   .projects-container article {
     /* Hero anchor targets (#poly etc.) shouldn't land flush with the
-		   viewport edge when JS is off. */
+  		   viewport edge when JS is off. */
     scroll-margin-top: var(--space-8);
     background: var(--bg-card);
     border: 1px solid var(--border);
