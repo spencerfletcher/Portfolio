@@ -327,7 +327,7 @@ import ForkDemo from "../components/ForkDemo.astro";
 <style is:global>
   .page {
     /* content-box so the 860px is the measure itself — the responsive
-  		   padding below sits outside it rather than eating into it. */
+    		   padding below sits outside it rather than eating into it. */
     box-sizing: content-box;
     max-width: 860px;
     margin: 0 auto;
@@ -590,6 +590,10 @@ import ForkDemo from "../components/ForkDemo.astro";
   .notes strong {
     color: var(--text-secondary);
     font-weight: 600;
+  }
+
+  .projects-container article#mem {
+    grid-column: 1 / -1;
   }
 </style>
 
