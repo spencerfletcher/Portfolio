@@ -19,8 +19,8 @@ import ForkDemo from "../components/ForkDemo.astro";
           <h1>Spencer Fletcher</h1>
           <p class="subtitle">
             I’m a UBC CS grad who builds high-quality tools for problems I care
-            about, from a <a href="#poly">live market-making engine</a>, to a
-            <a href="#mem"> Clang/LLVM memory-analysis tool</a>, to
+            about, from an <a href="#poly">automated market-making engine</a>,
+            to a<a href="#mem"> Clang/LLVM memory-analysis tool</a>, to
             <a href="#fork"> Fork</a>, a recipe workspace I built for developing
             my own recipes. I like taking software from an idea through testing,
             deployment, and real use.
@@ -86,8 +86,8 @@ import ForkDemo from "../components/ForkDemo.astro";
                   {
                     type: "stage",
                     label:
-                      "Stage 1 — Discover & Observe · asyncio / REST / WebSockets",
-                    desc: "Discovers eligible markets over REST, filters out poor quoting candidates, then maintains fresh order books through concurrent WebSocket feeds and on-demand reads.",
+                      "Stage 1 — Discover & Rank · asyncio / REST / WebSockets",
+                    desc: "Concurrent collectors record trades, order book depth, and quotes under a shared cross-process priority rate limiter. Market rankings use measured trade flow to identify quoting candidates.",
                   },
                   {
                     type: "object",
@@ -129,18 +129,14 @@ import ForkDemo from "../components/ForkDemo.astro";
             title="Fork: Recipe Development Platform"
             year="2025 - Ongoing"
             description="I built Fork because I wanted a better way to develop my own recipes without losing track of what changed or which version worked. It’s a full-stack SvelteKit/PostgreSQL platform combining <strong>recipe version control, algorithmic comparisons, interactive cooking tools, and version-linked cooking journals</strong> with a social cookbook for sharing and discovering recipes."
-            tags={["SvelteKit", "SQL", "TypeScript"]}
+            tags={["SvelteKit", "SQL", "TypeScript", "Supabase"]}
             links={[
-              {
-                label: "View Code →",
-                href: "https://github.com/spencerfletcher/Fork",
-              },
               {
                 label: "Live Project →",
                 href: "https://recipes.spencerfletcher.com",
               },
             ]}
-            href="https://github.com/spencerfletcher/Fork"
+            href="https://recipes.spencerfletcher.com"
             id="fork"
             panel
             detailLayout="stack"
